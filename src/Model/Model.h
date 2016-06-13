@@ -6,7 +6,7 @@ class Model {
     Model() {}
     ~Model() {}
     // Initialize model given input line from data file.
-    void Initialize(std::string &input_line) {
+    virtual void Initialize(std::string &input_line) {
 	// Override.
     }
 };
