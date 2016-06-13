@@ -8,4 +8,5 @@ int main(int argc, char **argv) {
     MCModel model;
     std::vector<MCDatapoint> datapoints;
     DatasetReader::ReadDataset<MCDatapoint>(FLAGS_data_file, datapoints, model);
+
 }

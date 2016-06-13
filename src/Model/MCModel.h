@@ -11,15 +11,18 @@ class MCModel : public Model {
     double *u_model;
  public:
     MCModel() {}
-    ~MCModel() {}
+    ~MCModel() {
+	delete u_model;
+	delete v_model;
+    }
     void Initialize(std::string &input_line) override {
 	// Expected input_line format: N_USERS N_MOVIES.
 	std::stringstream input(input_line);
 	int n_users, n_movies;
 	input >> n_users >> n_movies;
 	int rlength = FLAGS_rlength;
-	v_model = (double *)malloc(sizeof(double) * n_users * rlength);
-	u_model = (double *)malloc(sizeof(double) * n_movies * rlength);
+	v_model = new double[n_users * rlength];
+	u_model = new double[n_movies * rlength];
 	if (!v_model || !u_model) {
 	    std::cerr << "MCModel: Error allocating model" << std::endl;
 	    exit(0);

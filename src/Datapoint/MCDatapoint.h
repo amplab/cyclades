@@ -1,6 +1,8 @@
 #ifndef _MCDATAPOINT_
 #define _MCDATAPOINT_
 
+#include <tuple>
+
 class MCDatapoint : public Datapoint {
  public:
     std::tuple<int, int, double> data;
