@@ -3,7 +3,7 @@
 # Implementation
 
 ## Design details
-### class: DataPoint (potentially override with application specific implementation)
+### class: DataPoint (override)
 #### Description
 Represents a single datapoint to be used in training.
 #### Override functions.
