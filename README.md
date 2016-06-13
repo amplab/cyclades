@@ -22,6 +22,6 @@ Initializes datapoints and model from given input file.
 static ReadDataset(string input_file, vector<DataPoint> &datapoints, Model &model);
 - Initialize datapoints from input file.
 #### File format
-1st line - Model configuration input line.
-2nd line - Number of datapoints.
-3rd line+ - Input lines for DataPoint.
+- 1st line : Model configuration input line.
+- 2nd line : Number of datapoints.
+- 3rd line+ : Input lines for DataPoint.
