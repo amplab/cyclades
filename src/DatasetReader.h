@@ -7,8 +7,9 @@
 
 class DatasetReader {
  public:
+    template<class DATAPOINT_CLASS>
     static void ReadDataset(std::string &input_file,
-			    std::vector<Datapoint> &datapoints,
+			    std::vector<DATAPOINT_CLASS> &datapoints,
 			    Model &model) {
 	std::ifstream data_file_input(input_file);
 

@@ -19,7 +19,7 @@ void Initialize(string input_line)
 #### Description
 Initializes datapoints and model from given input file.
 #### Necessary functions
-static void ReadDataset(string input_file, vector<DataPoint> &datapoints, Model &model);
+static void ReadDataset(string input_file, vector<DATAPOINT_CLASS> &datapoints, Model &model);
 - Initialize datapoints from input file.
 
 #### File format

@@ -4,7 +4,9 @@
 #include <gflags/gflags.h>
 #include <iostream>
 #include "Model/Model.h"
+#include "Model/MCModel.h"
 #include "Datapoint/Datapoint.h"
+#include "Datapoint/MCDatapoint.h"
 #include "DatasetReader.h"
 
 DEFINE_string(data_file, "blank", "Input data file.");
