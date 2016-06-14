@@ -2,22 +2,40 @@
 #define _MCDATAPOINT_
 
 #include <tuple>
+#include <sstream>
 
 class MCDatapoint : public Datapoint {
- public:
-    std::tuple<int, int, double> data;
+ private:
+    double label;
+    std::vector<double> coordinates;
 
-    MCDatapoint() {}
+ public:
+
+    MCDatapoint() {
+	coordinates.resize(2);
+    }
     ~MCDatapoint() {}
 
     // Initialize given datapoint given input data line.
-    virtual void Initialize(std::string &input_line) {
+    virtual void Initialize(const std::string &input_line) {
 	// Expected input_line format: user_coord, movie_coord, rating.
 	std::stringstream input(input_line);
-	int user_coord, movie_coord;
-	double rating;
-	input >> user_coord >> movie_coord >> rating;
-	data = std::tuple<int, int, double>(user_coord, movie_coord, rating);
+	input >> coordinates[0] >> coordinates[1] >> label;
+    }
+
+    // Write label to output.
+    double GetLabel() override {
+	return label;
+    }
+
+    // Write data to output.
+    const std::vector<double> & GetData() override {
+	return coordinates;
+    }
+
+    // For matrix completion, each datapoint touches 2 coordinates.
+    int GetNumCoordinateTouches() override {
+	return coordinates.size();
     }
 };
 
