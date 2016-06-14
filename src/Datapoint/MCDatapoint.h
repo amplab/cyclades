@@ -16,24 +16,20 @@ class MCDatapoint : public Datapoint {
     }
     ~MCDatapoint() {}
 
-    // Initialize given datapoint given input data line.
-    virtual void Initialize(const std::string &input_line) {
+    void Initialize(const std::string &input_line) override {
 	// Expected input_line format: user_coord, movie_coord, rating.
 	std::stringstream input(input_line);
 	input >> coordinates[0] >> coordinates[1] >> label;
     }
 
-    // Write label to output.
     double GetLabel() override {
 	return label;
     }
 
-    // Write data to output.
     const std::vector<double> & GetData() override {
 	return coordinates;
     }
 
-    // For matrix completion, each datapoint touches 2 coordinates.
     int GetNumCoordinateTouches() override {
 	return coordinates.size();
     }
