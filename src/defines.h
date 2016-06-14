@@ -1,6 +1,7 @@
 #ifndef _DEFINES_
 #define _DEFINES_
 
+#include <omp.h>
 #include <gflags/gflags.h>
 #include <iostream>
 #include <memory>
