@@ -9,6 +9,8 @@ int main(int argc, char **argv) {
     std::vector<Datapoint *> datapoints;
     DatasetReader::ReadDataset<MCDatapoint, MCModel>(FLAGS_data_file, datapoints, &model);
 
+    std::cout << model->ComputeLoss(datapoints) << std::endl;
+
     delete model;
     for_each(datapoints.begin(), datapoints.end(), std::default_delete<Datapoint>());
 }

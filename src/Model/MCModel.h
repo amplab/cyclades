@@ -74,7 +74,7 @@ class MCModel : public Model {
 	    double difference = cross_product - label;
 	    loss += difference * difference;
 	}
-	return loss;
+	return loss / datapoints.size();
     }
 };
 
