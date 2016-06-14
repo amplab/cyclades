@@ -5,22 +5,30 @@
 #### Description
 Represents a single datapoint to be used in training.
 #### Override functions
-void Initialize(string input_line)
+void Initialize(const string & input_line)
 - Initialize constructed datapoint from a single input line from the input data.
+double GetLabel()
+- Return label for datapoint.
+const std::vector<double> & GetData()
+- Return vector containing data representing datapoint. Should be precomputed.
+int GetNumCoordinateTouches
+- Return the number of coordinates that this datapoint touches.
 
 ### class: Model (override)
 #### Description
 Represents the model to train. Define any necessary extra variables to represent the model.
 #### Override functions
-void Initialize(string input_line)
+void Initialize(const string &input_line)
 - Initialize the model from a single input line from the input data. This line should be the top line of the data file.
+double ComputeLoss(const std::vector<Datapoint *> &datapoints)
+- Computes loss given set of datapoints.
 
 ### class: DatasetReader
 #### Description
-Initializes datapoints and model from given input file.
+Allocates and initializes datapoints and model from given input file.
 #### Necessary functions
-static void ReadDataset(string input_file, vector<DATAPOINT_CLASS> &datapoints, Model &model);
-- Initialize datapoints from input file.
+static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Model **model);
+- Initialize/Allocates model and datapoints from input file.
 
 #### File format
 - 1st line : Model configuration input line.
