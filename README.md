@@ -1,6 +1,6 @@
 # cyclades
 
-## Design details (Work in progress)
+## Implementation details (Work in progress)
 ### class: DataPoint (override)
 #### Description
 Represents a single datapoint to be used in training.
