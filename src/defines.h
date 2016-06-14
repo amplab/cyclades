@@ -3,6 +3,9 @@
 
 #include <gflags/gflags.h>
 #include <iostream>
+#include <memory>
+#include <vector>
+#include <algorithm>
 #include "Datapoint/Datapoint.h"
 #include "Datapoint/MCDatapoint.h"
 #include "Model/Model.h"
