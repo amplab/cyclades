@@ -1,13 +1,14 @@
 #ifndef _DATASET_READER_
 #define _DATASET_READER_
 
+#include <vector>
 #include <fstream>
 #include "Model/Model.h"
 #include "Datapoint/Datapoint.h"
 
 class DatasetReader {
  public:
-    template<class DATAPOINT_CLASS, class MODEL_CLASS>
+    template<class MODEL_CLASS, class DATAPOINT_CLASS>
     static void ReadDataset(std::string &input_file,
 			    std::vector<Datapoint *> &datapoints,
 			    Model *&model) {
