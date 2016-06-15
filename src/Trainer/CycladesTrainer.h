@@ -7,7 +7,6 @@ public:
     ~CycladesTrainer() {}
 
     void Run(Model *model, const std::vector<Datapoint *> & datapoints) override {
-	if (model->ComputeLoss(datapoints) < 100) std::cerr << "WTF?" << std::endl;
     }
 };
 
