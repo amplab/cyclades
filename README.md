@@ -1,7 +1,7 @@
 # cyclades
 
 ## Implementation details (Work in progress)
-### class: DataPoint (override)
+### class: DataPoint (interface)
 #### Description
 Represents a single datapoint to be used in training.
 #### Override functions
@@ -17,7 +17,7 @@ void * GetData()
 int GetNumCoordinateTouches
 - Return the number of coordinates that this datapoint touches.
 
-### class: Model (override)
+### class: Model (interface)
 #### Description
 Represents the model to train. Define any necessary extra variables to represent the model.
 #### Override functions
@@ -30,7 +30,7 @@ double ComputeLoss(const std::vector<Datapoint *> &datapoints)
 ### class: DatasetReader
 #### Description
 Allocates and initializes datapoints and model from given input file.
-#### Necessary functions
+#### Methods
 static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Model **model);
 - Initialize/Allocates model and datapoints from input file.
 
@@ -38,3 +38,10 @@ static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Mode
 - 1st line : Model configuration input line.
 - 2nd line : Number of datapoints.
 - 3rd line+ : Input lines for DataPoint.
+
+### class: Trainer (interface)
+#### Description
+Interface for Hogwild/Cyclades trainers.
+#### Functions
+void Run(Model *model, const std::vector<Datapoint *> & datapoints)
+- Trains model on datapoints.
