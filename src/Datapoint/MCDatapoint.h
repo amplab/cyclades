@@ -7,31 +7,31 @@
 class MCDatapoint : public Datapoint {
  private:
     double label;
-    std::vector<double> coordinates;
+    int coordinates[2];
 
- public:
-
-    MCDatapoint() {
-	coordinates.resize(2);
-    }
-    ~MCDatapoint() {}
-
-    void Initialize(const std::string &input_line) override {
+    void Initialize(const std::string &input_line) {
 	// Expected input_line format: user_coord, movie_coord, rating.
 	std::stringstream input(input_line);
 	input >> coordinates[0] >> coordinates[1] >> label;
     }
 
+ public:
+
+    MCDatapoint(const std::string &input_line) {
+	Initialize(input_line);
+    }
+    ~MCDatapoint() {}
+
     double GetLabel() override {
 	return label;
     }
 
-    const std::vector<double> & GetData() override {
-	return coordinates;
+    void * GetData() override {
+	return (void *)coordinates;
     }
 
     int GetNumCoordinateTouches() override {
-	return coordinates.size();
+	return 2;
     }
 };
 

@@ -10,10 +10,8 @@ class DatasetReader {
     template<class DATAPOINT_CLASS, class MODEL_CLASS>
     static void ReadDataset(std::string &input_file,
 			    std::vector<Datapoint *> &datapoints,
-			    Model **model) {
+			    Model *&model) {
 	// Allocate model.
-	*model = new MODEL_CLASS();
-
 	std::ifstream data_file_input(input_file);
 
 	if (!data_file_input) {
@@ -24,33 +22,18 @@ class DatasetReader {
 	// 1st line : model input line.
 	std::string first_line;
 	std::getline(data_file_input, first_line);
-	(*model)->Initialize(first_line);
+	model = new MODEL_CLASS(first_line);
 
-	// 2nd line : number of datapoints.
-	std::string num_datapoints_string;
-	int num_datapoints;
-	std::getline(data_file_input, num_datapoints_string);
-	num_datapoints = stoi(num_datapoints_string);
-	datapoints.resize(num_datapoints);
-	for (int i = 0; i < num_datapoints; i++) {
-	    datapoints[i] = new DATAPOINT_CLASS;
+	if (datapoints.size() != 0) {
+	    std::cerr << "DatasetReader: datapoints is not empty." << std::endl;
+	    exit(0);
 	}
 
-	// 3rd line+ : datapoint initialization.
+	// 2nd line+ : datapoint initialization.
 	std::string datapoint_line;
 	int datapoint_count = 0;
 	while (std::getline(data_file_input, datapoint_line)) {
-	    if (datapoint_count >= num_datapoints) {
-		datapoint_count++;
-		break;
-	    }
-	    datapoints[datapoint_count++]->Initialize(datapoint_line);
-	}
-
-	// Some error checking.
-	if (datapoint_count != num_datapoints) {
-	    std::cerr << "DatasetReader: datapoint_count != num_datapoints" << std::endl;
-	    exit(0);
+	    datapoints.push_back(new DATAPOINT_CLASS(datapoint_line));
 	}
     }
 };

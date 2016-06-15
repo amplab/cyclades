@@ -11,8 +11,8 @@ void Initialize(const string & input_line)
 double GetLabel()
 - Return label for datapoint.
 
-const std::vector<double> & GetData()
-- Return vector containing data representing datapoint. Should be precomputed.
+void * GetData()
+- Return pointer containing data representing datapoint. Should be precomputed for efficiency.
 
 int GetNumCoordinateTouches
 - Return the number of coordinates that this datapoint touches.

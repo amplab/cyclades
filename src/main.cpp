@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     // For Debug for now.
     Model *model;
     std::vector<Datapoint *> datapoints;
-    DatasetReader::ReadDataset<MCDatapoint, MCModel>(FLAGS_data_file, datapoints, &model);
+    DatasetReader::ReadDataset<MCDatapoint, MCModel>(FLAGS_data_file, datapoints, model);
 
     std::cout << model->ComputeLoss(datapoints) << std::endl;
 

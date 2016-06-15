@@ -4,10 +4,8 @@
 class Model {
  public:
     Model() {}
+    Model(const std::string &input_line) {}
     virtual ~Model() {}
-
-    // Initialize model given input line from data file.
-    virtual void Initialize(const std::string &input_line) = 0;
 
     // Computes loss on the model
     virtual double ComputeLoss(const std::vector<Datapoint *> &datapoints) = 0;

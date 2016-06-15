@@ -26,22 +26,7 @@ class MCModel : public Model {
 	}
     }
 
- public:
-    MCModel() {
-	u_model = NULL;
-	v_model = NULL;
-    }
-
-    ~MCModel() {
-	if (u_model) {
-	    delete u_model;
-	}
-	if (v_model) {
-	    delete v_model;
-	}
-    }
-
-    void Initialize(const std::string &input_line) override {
+    void Initialize(const std::string &input_line) {
 	// Expected input_line format: N_USERS N_MOVIES.
 	std::stringstream input(input_line);
 	input >> n_users >> n_movies;
@@ -59,14 +44,24 @@ class MCModel : public Model {
 	InitializePrivateModels();
     }
 
+ public:
+    MCModel(const std::string &input_line) {
+	Initialize(input_line);
+    }
+
+    ~MCModel() {
+	delete u_model;
+	delete v_model;
+    }
+
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
 	double loss = 0;
 	for (int i = 0; i < datapoints.size(); i++) {
 	    Datapoint *datapoint = datapoints[i];
 	    double label = datapoint->GetLabel();
-	    const std::vector<double> & data = datapoint->GetData();
-	    int x = (int)data[0];
-	    int y = (int)data[1];
+	    int *data = (int *)datapoint->GetData();
+	    int x = data[0];
+	    int y = data[1];
 	    double cross_product = 0;
 	    for (int j = 0; j < rlength; j++) {
 		cross_product += v_model[x*rlength+j] * u_model[y*rlength+j];

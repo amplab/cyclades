@@ -4,10 +4,8 @@
 class Datapoint {
  public:
     Datapoint() {}
+    Datapoint(const std::string &input_line) {}
     virtual ~Datapoint() {}
-
-    // Initialize given datapoint given input data line.
-    virtual void Initialize(const std::string &input_line) = 0;
 
     // Write label of the given datapoint to pointer.
     // Assume memory is allocated.
@@ -15,7 +13,7 @@ class Datapoint {
 
     // Write data of datapoint to pointer.
     // Assume memory is allocated.
-    virtual const std::vector<double> & GetData() = 0;
+    virtual void * GetData() = 0;
 
     // Get number of coordinates accessed by the datapoint.
     virtual int GetNumCoordinateTouches() = 0;
