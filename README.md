@@ -12,13 +12,13 @@ Datapoint(const string & input_line, int order)
 ```
 
 ```c++
-double GetLabel()
-- Return label for datapoint.
+const std::vector<double> GetLabels()
+- Return labels for datapoint.
 ```
 
 ```c++
-void * GetData()
-- Return pointer containing data representing datapoint. Should be precomputed for efficiency.
+const std::vector<int> GetCoordinates()
+- Get coordinates corresponding to labels of GetLabels().
 ```
 
 ```c++

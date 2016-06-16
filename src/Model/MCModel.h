@@ -59,10 +59,11 @@ class MCModel : public Model {
 	double loss = 0;
 	for (int i = 0; i < datapoints.size(); i++) {
 	    Datapoint *datapoint = datapoints[i];
-	    double label = datapoint->GetLabel();
-	    int *data = (int *)datapoint->GetData();
-	    int x = data[0];
-	    int y = data[1];
+	    const std::vector<double> & labels = datapoint->GetLabels();
+	    const std::vector<int> & coordinates = datapoint->GetCoordinates();
+	    double label = labels[0];
+	    int x = coordinates[0];
+	    int y = coordinates[1];
 	    double cross_product = 0;
 	    for (int j = 0; j < rlength; j++) {
 		cross_product += v_model[x*rlength+j] * u_model[y*rlength+j];

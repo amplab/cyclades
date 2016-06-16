@@ -11,13 +11,11 @@ class Datapoint {
     }
     virtual ~Datapoint() {}
 
-    // Write label of the given datapoint to pointer.
-    // Assume memory is allocated.
-    virtual double GetLabel() = 0;
+    // Get labels corresponding to the corresponding coordinates of GetCoordinates().
+    virtual const std::vector<double> & GetLabels() = 0;
 
-    // Write data of datapoint to pointer.
-    // Assume memory is allocated.
-    virtual void * GetData() = 0;
+    // Get coordinates corresponding to labels of GetLabels().
+    virtual const std::vector<int> & GetCoordinates() = 0;
 
     // Get number of coordinates accessed by the datapoint.
     virtual int GetNumCoordinateTouches() = 0;
