@@ -1,11 +1,12 @@
 #include <iostream>
 #include "defines.h"
 
+template<class MODEL_CLASS, class DATAPOINT_CLASS>
 void Run() {
     // Initialize model and datapoints.
     Model *model;
     std::vector<Datapoint *> datapoints;
-    DatasetReader::ReadDataset<MCModel, MCDatapoint>(FLAGS_data_file, datapoints, model);
+    DatasetReader::ReadDataset<MODEL_CLASS, DATAPOINT_CLASS>(FLAGS_data_file, datapoints, model);
 
     Trainer *trainer;
     if (FLAGS_cyclades) {
@@ -26,5 +27,5 @@ void Run() {
 
 int main(int argc, char **argv) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    Run();
+    Run<MCModel, MCDatapoint>();
 }
