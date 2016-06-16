@@ -49,7 +49,7 @@ void Run(Model *model, const std::vector<Datapoint *> & datapoints)
 
 ### class: Partitioner
 #### Description
-Partitions datapoints to workloads of different threads. Should have different types, like
+Partitions datapoints to workloads for multiple threads. Should have different types, like
 BasicPartitioner, CycladesPartitioner, etc.
 #### Methods
 DatapointPartitions Partition(const std::vector<Datapoint *> &datapoints, int n_threads)
