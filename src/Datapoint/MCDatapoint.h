@@ -17,7 +17,7 @@ class MCDatapoint : public Datapoint {
 
  public:
 
-    MCDatapoint(const std::string &input_line) {
+    MCDatapoint(const std::string &input_line, int order) : Datapoint(input_line, order) {
 	Initialize(input_line);
     }
     ~MCDatapoint() {}

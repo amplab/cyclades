@@ -34,7 +34,7 @@ class DatasetReader {
 	std::string datapoint_line;
 	int datapoint_count = 0;
 	while (std::getline(data_file_input, datapoint_line)) {
-	    datapoints.push_back(new DATAPOINT_CLASS(datapoint_line));
+	    datapoints.push_back(new DATAPOINT_CLASS(datapoint_line, datapoint_count++));
 	}
     }
 };

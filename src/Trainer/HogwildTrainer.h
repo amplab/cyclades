@@ -7,6 +7,12 @@ public:
     ~HogwildTrainer() {}
 
     void Run(Model *model, const std::vector<Datapoint *> & datapoints) override {
+	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
+	    if (FLAGS_print_loss_per_epoch) {
+		std::cout << model->ComputeLoss(datapoints) << std::endl;
+	    }
+
+	}
     }
 };
 

@@ -2,9 +2,13 @@
 #define _DATAPOINT_
 
 class Datapoint {
+ private:
+    int order;
  public:
     Datapoint() {}
-    Datapoint(const std::string &input_line) {}
+    Datapoint(const std::string &input_line, int order) {
+	this->order = order;
+    }
     virtual ~Datapoint() {}
 
     // Write label of the given datapoint to pointer.
@@ -17,6 +21,11 @@ class Datapoint {
 
     // Get number of coordinates accessed by the datapoint.
     virtual int GetNumCoordinateTouches() = 0;
+
+    // Get the order of a datapoint (equivalent to id).
+    virtual int GetOrder() {
+	return order;
+    }
 };
 
 #endif
