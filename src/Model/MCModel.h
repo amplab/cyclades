@@ -2,6 +2,7 @@
 #define _MCMODEL_
 
 #include <sstream>
+#include "Model.h"
 
 DEFINE_int32(rlength, 100, "Length of vector in matrix completion.");
 

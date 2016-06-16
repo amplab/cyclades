@@ -21,6 +21,9 @@ DEFINE_double(learning_rate, .001, "Learning rate.");
 DEFINE_bool(cyclades, true, "Cyclades training if true, Hogwild training if false.");
 DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
 
+#include "DatapointPartitions/DatapointPartitions.h"
+#include "Partitioner/Partitioner.h"
+#include "Partitioner/BasicPartitioner.h"
 #include "Trainer/CycladesTrainer.h"
 #include "Trainer/HogwildTrainer.h"
 

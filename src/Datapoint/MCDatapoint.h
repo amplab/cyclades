@@ -3,6 +3,7 @@
 
 #include <tuple>
 #include <sstream>
+#include "Datapoint.h"
 
 class MCDatapoint : public Datapoint {
  private:
