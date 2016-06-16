@@ -47,7 +47,7 @@ Interface for Hogwild/Cyclades trainers.
 void Run(Model *model, const std::vector<Datapoint *> & datapoints)
 - Trains model on datapoints.
 
-### class: Partitioner
+### class: Partitioner (Interface)
 #### Description
 Partitions datapoints to workloads for multiple threads. Should have different types, like
 BasicPartitioner, CycladesPartitioner, etc.
