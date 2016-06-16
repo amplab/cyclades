@@ -60,7 +60,7 @@ static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Mode
 Interface for Hogwild/Cyclades trainers.
 ### Methods
 ```c++
-void Run(Model *model, const std::vector<Datapoint *> & datapoints)
+void Train(Model *model, const std::vector<Datapoint *> & datapoints)
 - Trains model on datapoints.
 ```
 
