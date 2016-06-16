@@ -7,18 +7,24 @@ Represents a single datapoint to be used in training.
 #### Override functions
 ```c++
 Datapoint(const string & input_line, int order)
+```
 - Initialize constructed datapoint from a single input line from the input data. Order represents
   the order in which the datapoint is to be processed.
 
+```c++
 double GetLabel()
+```
 - Return label for datapoint.
 
+```c++
 void * GetData()
+```
 - Return pointer containing data representing datapoint. Should be precomputed for efficiency.
 
+```c++
 int GetNumCoordinateTouches
-- Return the number of coordinates that this datapoint touches.
 ```
+- Return the number of coordinates that this datapoint touches.
 
 ### class: Model (interface)
 #### Description
