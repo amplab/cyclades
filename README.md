@@ -63,11 +63,15 @@ Batches are a way to group datapoints, necessary for Cyclades partitioning.
 #### Methods
 DatapointPartitions(int n_threads)
 - Constructor which takes in n_threads to represent partitions for.
+
 void StartNewBatch()
 - Starts a new batch.
+
 int NumBatches()
 - Returns number of batches in the partition.
+
 int NumDatapointsInBatch(int thread, int batch)
 - Returns the number of datapoints for a given thread in a given batch.
+
 void AddDatapointToThread(Datapoint *datapoint, int thread)
 - Adds a datapoint to the current batch for the given thread.
