@@ -8,6 +8,7 @@ void Run() {
     std::vector<Datapoint *> datapoints;
     DatasetReader::ReadDataset<MODEL_CLASS, DATAPOINT_CLASS>(FLAGS_data_file, datapoints, model);
 
+    // Create trainer depending on flag.
     Trainer *trainer;
     if (FLAGS_cyclades) {
 	trainer = new CycladesTrainer();
