@@ -26,7 +26,7 @@ class BasicPartitioner : public Partitioner {
 	    int end = n_points_per_thread * (thread+1);
 	    if (thread == n_threads-1) end = datapoints.size();
 	    for (int datapoint_count = start; datapoint_count < end; datapoint_count++) {
-		partitions.add_datapoint_to_thread(datapoints_copy[datapoint_count], thread);
+		partitions.AddDatapointToThread(datapoints_copy[datapoint_count], thread);
 	    }
 	}
 

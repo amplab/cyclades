@@ -43,6 +43,31 @@ static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Mode
 ### class: Trainer (interface)
 #### Description
 Interface for Hogwild/Cyclades trainers.
-#### Functions
+#### Methods
 void Run(Model *model, const std::vector<Datapoint *> & datapoints)
 - Trains model on datapoints.
+
+### class: Partitioner
+#### Description
+Partitions datapoints to workloads of different threads. Should have different types, like
+BasicPartitioner, CycladesPartitioner, etc.
+#### Methods
+DatapointPartitions Partition(const std::vector<Datapoint *> &datapoints, int n_threads)
+- Main partitioning method, which, given datapoints and number of threads,
+  returns a DatapointPartitions object representing partitioned datapoints for number of threads.
+
+### class: DatapointPartitions
+#### Description
+Represents partitions of datapoints for a given number of threads.
+Batches are a way to group datapoints, necessary for Cyclades partitioning.
+#### Methods
+DatapointPartitions(int n_threads)
+- Constructor which takes in n_threads to represent partitions for.
+void StartNewBatch()
+- Starts a new batch.
+int NumBatches()
+- Returns number of batches in the partition.
+int NumDatapointsInBatch(int thread, int batch)
+- Returns the number of datapoints for a given thread in a given batch.
+void AddDatapointToThread(Datapoint *datapoint, int thread)
+- Adds a datapoint to the current batch for the given thread.
