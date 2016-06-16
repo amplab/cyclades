@@ -1,7 +1,7 @@
 # cyclades
 
 ## Implementation details (Work in progress)
-### class: DataPoint (interface)
+### class DataPoint (interface)
 #### Description
 Represents a single datapoint to be used in training.
 #### Override functions
@@ -26,7 +26,7 @@ int GetNumCoordinateTouches()
 ```
 - Return the number of coordinates that this datapoint touches.
 
-### class: Model (interface)
+### class Model (interface)
 #### Description
 Represents the model to train. Define any necessary extra variables to represent the model.
 #### Override functions
@@ -40,7 +40,7 @@ double ComputeLoss(const std::vector<Datapoint *> &datapoints)
 ```
 - Computes loss given set of datapoints.
 
-### class: DatasetReader
+### class DatasetReader
 #### Description
 Allocates and initializes datapoints and model from given input file.
 #### Methods
@@ -54,7 +54,7 @@ static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Mode
 - 2nd line : Number of datapoints.
 - 3rd line+ : Input lines for DataPoint.
 
-### class: Trainer (interface)
+### class Trainer (interface)
 #### Description
 Interface for Hogwild/Cyclades trainers.
 #### Methods
@@ -63,7 +63,7 @@ void Run(Model *model, const std::vector<Datapoint *> & datapoints)
 ```
 - Trains model on datapoints.
 
-### class: Partitioner (interface)
+### class Partitioner (interface)
 #### Description
 Partitions datapoints to workloads for multiple threads. Should have different types, like
 BasicPartitioner, CycladesPartitioner, etc.
@@ -74,7 +74,7 @@ DatapointPartitions Partition(const std::vector<Datapoint *> &datapoints, int n_
 - Main partitioning method, which, given datapoints and number of threads,
   returns a DatapointPartitions object representing partitioned datapoints for number of threads.
 
-### class: DatapointPartitions
+### class DatapointPartitions
 #### Description
 Represents partitions of datapoints for a given number of threads.
 Batches are a way to group datapoints, necessary for Cyclades partitioning.
