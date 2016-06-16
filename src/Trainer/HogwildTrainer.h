@@ -6,7 +6,7 @@ public:
     HogwildTrainer() {}
     ~HogwildTrainer() {}
 
-    void Run(Model *model, const std::vector<Datapoint *> & datapoints) override {
+    void Train(Model *model, const std::vector<Datapoint *> & datapoints) override {
 	BasicPartitioner Partitioner;
 	DatapointPartitions partitions = Partitioner.Partition(datapoints, FLAGS_n_threads);
 

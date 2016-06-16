@@ -7,7 +7,7 @@ class Trainer {
     virtual ~Trainer() {}
 
     // Main training method.
-    virtual void Run(Model *model, const std::vector<Datapoint *> & datapoints) = 0;
+    virtual void Train(Model *model, const std::vector<Datapoint *> & datapoints) = 0;
 };
 
 #endif

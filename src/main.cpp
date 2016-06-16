@@ -16,7 +16,7 @@ void Run() {
     else {
 	trainer = new HogwildTrainer();
     }
-    trainer->Run(model, datapoints);
+    trainer->Train(model, datapoints);
 
     // Delete trainer.
     delete trainer;
