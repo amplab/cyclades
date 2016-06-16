@@ -43,16 +43,16 @@ double ComputeLoss(const std::vector<Datapoint *> &datapoints)
 ## class DatasetReader
 
 Allocates and initializes datapoints and model from given input file.
+
+### File format
+- 1st line : Model configuration input line.
+- 2nd line+ : Input lines for DataPoint.
+
 ### Methods
 ```c++
 static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Model **model);
 - Initialize/Allocates model and datapoints from input file.
 ```
-
-### File format
-- 1st line : Model configuration input line.
-- 2nd line : Number of datapoints.
-- 3rd line+ : Input lines for DataPoint.
 
 ## class Trainer (interface)
 
