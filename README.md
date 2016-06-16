@@ -81,8 +81,8 @@ Batches are a way to group datapoints, necessary for Cyclades partitioning.
 #### Methods
 ```c++
 DatapointPartitions(int n_threads)
-```
 - Constructor which takes in n_threads to represent partitions for.
+```
 
 ```c++
 void StartNewBatch()
