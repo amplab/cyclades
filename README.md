@@ -40,6 +40,11 @@ double ComputeLoss(const std::vector<Datapoint *> &datapoints)
 - Computes loss given set of datapoints.
 ```
 
+```c++
+void SetUp(const std::vector<Datapoint *> &datapoints)
+- Do any kind of set up before running gradient descent.
+```
+
 ## class DatasetReader
 
 Allocates and initializes datapoints and model from given input file. Lines from the data file

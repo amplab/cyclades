@@ -7,6 +7,7 @@ void Run() {
     Model *model;
     std::vector<Datapoint *> datapoints;
     DatasetReader::ReadDataset<MODEL_CLASS, DATAPOINT_CLASS>(FLAGS_data_file, datapoints, model);
+    model->SetUp(datapoints);
 
     // Create trainer depending on flag.
     Trainer *trainer;

@@ -29,6 +29,10 @@ class MCDatapoint : public Datapoint {
     }
     ~MCDatapoint() {}
 
+    void OffsetMovieCoord(int offset) {
+	coordinates[1] += offset;
+    }
+
     const std::vector<double> & GetLabels() override {
 	return labels;
     }

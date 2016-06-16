@@ -8,21 +8,15 @@ DEFINE_int32(rlength, 100, "Length of vector in matrix completion.");
 
 class MCModel : public Model {
  private:
-    double *v_model;
-    double *u_model;
+    double *model;
     int n_users;
     int n_movies;
     int rlength;
 
-    void InitializePrivateModels() {
-	for (int i = 0; i < n_users; i++) {
+    void InitializePrivateModel() {
+	for (int i = 0; i < n_users+n_movies; i++) {
 	    for (int j = 0; j < rlength; j++) {
-		v_model[i*rlength+j] = ((double)rand()/(double)RAND_MAX);
-	    }
-	}
-	for (int i = 0; i < n_movies; i++) {
-	    for (int j = 0; j < FLAGS_rlength; j++) {
-		u_model[i*rlength+j] = ((double)rand()/(double)RAND_MAX);
+		model[i*rlength+j] = ((double)rand()/(double)RAND_MAX);
 	    }
 	}
     }
@@ -34,15 +28,14 @@ class MCModel : public Model {
 	rlength = FLAGS_rlength;
 
 	// Allocate memory.
-	v_model = new double[n_users * rlength];
-	u_model = new double[n_movies * rlength];
-	if (!v_model || !u_model) {
+	model = new double[(n_users+n_movies) * rlength];
+	if (!model) {
 	    std::cerr << "MCModel: Error allocating model" << std::endl;
 	    exit(0);
 	}
 
 	// Initialize private model.
-	InitializePrivateModels();
+	InitializePrivateModel();
     }
 
  public:
@@ -51,8 +44,16 @@ class MCModel : public Model {
     }
 
     ~MCModel() {
-	delete u_model;
-	delete v_model;
+	delete model;
+    }
+
+    void SetUp(const std::vector<Datapoint *> &datapoints) override {
+	// Update the movies coordinates to reference the second
+	// chunk of the model. Do this by offsetting the coordinates
+	// by n_users.
+	for (const auto & datapoint : datapoints) {
+	    ((MCDatapoint *)datapoint)->OffsetMovieCoord(n_users);
+	}
     }
 
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
@@ -66,7 +67,7 @@ class MCModel : public Model {
 	    int y = coordinates[1];
 	    double cross_product = 0;
 	    for (int j = 0; j < rlength; j++) {
-		cross_product += v_model[x*rlength+j] * u_model[y*rlength+j];
+		cross_product += model[x*rlength+j] * model[y*rlength+j];
 	    }
 	    double difference = cross_product - label;
 	    loss += difference * difference;
