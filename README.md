@@ -4,7 +4,7 @@
 ### class DataPoint (interface)
 #### Description
 Represents a single datapoint to be used in training.
-#### Override functions
+#### Methods
 ```c++
 Datapoint(const string & input_line, int order)
 - Initialize constructed datapoint from a single input line from the input data. Order represents
@@ -29,7 +29,7 @@ int GetNumCoordinateTouches()
 ### class Model (interface)
 #### Description
 Represents the model to train. Define any necessary extra variables to represent the model.
-#### Override functions
+#### Methods
 ```c++
 Model(const string &input_line)
 - Initialize the model from a single input line from the input data. This line should be the top line of the data file.
