@@ -5,8 +5,9 @@
 #### Description
 Represents a single datapoint to be used in training.
 #### Override functions
-void Initialize(const string & input_line)
-- Initialize constructed datapoint from a single input line from the input data.
+Datapoint(const string & input_line, int order)
+- Initialize constructed datapoint from a single input line from the input data. Order represents
+  the order in which the datapoint is to be processed.
 
 double GetLabel()
 - Return label for datapoint.
@@ -21,7 +22,7 @@ int GetNumCoordinateTouches
 #### Description
 Represents the model to train. Define any necessary extra variables to represent the model.
 #### Override functions
-void Initialize(const string &input_line)
+Model(const string &input_line)
 - Initialize the model from a single input line from the input data. This line should be the top line of the data file.
 
 double ComputeLoss(const std::vector<Datapoint *> &datapoints)
