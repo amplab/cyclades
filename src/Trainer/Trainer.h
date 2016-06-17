@@ -1,6 +1,7 @@
 #ifndef _TRAINER_
 #define _TRAINER_
 
+template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS, class UPDATER_CLASS>
 class Trainer {
  public:
     Trainer() {
@@ -20,7 +21,7 @@ class Trainer {
     virtual ~Trainer() {}
 
     // Main training method.
-    virtual void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater *updater) = 0;
+    virtual void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) = 0;
 };
 
 #endif

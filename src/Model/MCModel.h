@@ -60,8 +60,8 @@ class MCModel : public Model {
 	double loss = 0;
 	for (int i = 0; i < datapoints.size(); i++) {
 	    Datapoint *datapoint = datapoints[i];
-	    const std::vector<double> & labels = datapoint->GetLabels();
-	    const std::vector<int> & coordinates = datapoint->GetCoordinates();
+	    const std::vector<double> &labels = datapoint->GetLabels();
+	    const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	    double label = labels[0];
 	    int x = coordinates[0];
 	    int y = coordinates[1];
@@ -73,6 +73,36 @@ class MCModel : public Model {
 	    loss += difference * difference;
 	}
 	return loss / datapoints.size();
+    }
+
+    void ComputeGradient(Datapoint * datapoint, MCGradient &gradient) override {
+	const std::vector<double> &labels = datapoint->GetLabels();
+	const std::vector<int> &coordinates = datapoint->GetCoordinates();
+	int user_coordinate = coordinates[0];
+	int movie_coordinate = coordinates[1];
+	double label = labels[0];
+	gradient.gradient_coefficient = 0;
+	gradient.datapoint = datapoint;
+	for (int i = 0; i < rlength; i++) {
+	    gradient.gradient_coefficient += model[user_coordinate*rlength+i] * model[movie_coordinate*rlength+i];
+	}
+	gradient.gradient_coefficient -= label;
+    }
+
+    void ApplyGradient(MCGradient &gradient) override {
+	double gradient_coefficient = gradient.gradient_coefficient;
+	Datapoint *datapoint = gradient.datapoint;
+	const std::vector<int> &coordinates = datapoint->GetCoordinates();
+	int user_coordinate = coordinates[0];
+	int movie_coordinate = coordinates[1];
+	for (int i = 0; i < rlength; i++) {
+	    double new_user_value = model[user_coordinate*rlength+i] -
+		FLAGS_learning_rate * gradient_coefficient * model[movie_coordinate*rlength+i];
+	    double new_movie_value = model[movie_coordinate*rlength+i] -
+		FLAGS_learning_rate * gradient_coefficient * model[user_coordinate*rlength+i];
+	    model[user_coordinate*rlength+i] = new_user_value;
+	    model[movie_coordinate*rlength+i] = new_movie_value;
+	}
     }
 };
 

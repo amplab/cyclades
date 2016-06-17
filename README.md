@@ -41,6 +41,13 @@ double ComputeLoss(const std::vector<Datapoint *> &datapoints)
 ```
 
 ```c++
+void * ComputeGradient(Datapoint *)
+- Compute gradient. Return as a void * so the gradient can be anything.
+  Make sure this method is thread safe / conflict free, since multiple threads
+  will be calling it.
+```
+
+```c++
 void SetUp(const std::vector<Datapoint *> &datapoints)
 - Do any kind of set up before running gradient descent.
 ```
