@@ -6,7 +6,7 @@ public:
     CycladesTrainer() {}
     ~CycladesTrainer() {}
 
-    void Train(Model *model, const std::vector<Datapoint *> & datapoints) override {
+    void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater *updater) override {
     }
 };
 

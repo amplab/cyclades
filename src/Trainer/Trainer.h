@@ -3,11 +3,24 @@
 
 class Trainer {
  public:
-    Trainer() {}
+    Trainer() {
+	// Some error checking.
+	if (FLAGS_n_threads > std::thread::hardware_concurrency()) {
+	    std::cerr << "Trainer: Number of threads is greater than the number of physical cores." << std::endl;
+	    exit(0);
+	}
+
+	// Basic set up, like pinning to core, setting number of threads.
+	omp_set_num_threads(FLAGS_n_threads);
+#pragma omp parallel
+	{
+	    pin_to_core(omp_get_thread_num());
+	}
+    }
     virtual ~Trainer() {}
 
     // Main training method.
-    virtual void Train(Model *model, const std::vector<Datapoint *> & datapoints) = 0;
+    virtual void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater *updater) = 0;
 };
 
 #endif

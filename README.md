@@ -65,7 +65,7 @@ static void ReadDataset(string input_file, vector<Datapoint *> &datapoints, Mode
 Interface for Hogwild/Cyclades trainers.
 ### Methods
 ```c++
-void Train(Model *model, const std::vector<Datapoint *> & datapoints)
+void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater *updater)
 - Trains model on datapoints.
 ```
 
@@ -108,4 +108,12 @@ int NumDatapointsInBatch(int thread, int batch)
 ```c++
 void AddDatapointToThread(Datapoint *datapoint, int thread)
 - Adds a datapoint to the current batch for the given thread.
+```
+
+## class Updater
+Updates model given datapoint. Examples of subclass : SGDUpdater, SAGAUpdater, etc.
+
+```c++
+void Update(Model *model, Datapoint *datapoint)
+- Updates model given a single datapoint.
 ```
