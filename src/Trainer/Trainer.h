@@ -4,6 +4,10 @@
 template<class GRADIENT_CLASS>
 class Trainer {
 protected:
+    void PrintPartitionTime(Timer &timer) {
+	printf("Partition Time(s): %f\n", timer.Elapsed());
+    }
+
     void PrintTimeLoss(Timer &timer, Model *model, const std::vector<Datapoint *> &datapoints) {
 	printf("Time(s): %f\tLoss: %lf\n", timer.Elapsed(), model->ComputeLoss(datapoints));
     }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "defines.h"
 
-template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS, template<class> class UPDATER_CLASS>
+template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS>
 void Run() {
     // Initialize model and datapoints.
     Model *model;
@@ -10,7 +10,14 @@ void Run() {
     model->SetUp(datapoints);
 
     // Create updater.
-    UPDATER_CLASS<GRADIENT_CLASS> *updater = new UPDATER_CLASS<GRADIENT_CLASS>(FLAGS_n_threads);
+    Updater<GRADIENT_CLASS> *updater = NULL;
+    if (FLAGS_sgd) {
+	updater = new SGDUpdater<GRADIENT_CLASS>(FLAGS_n_threads);
+    }
+    if (!updater) {
+	std::cerr << "Main: updater class not chosen." << std::endl;
+	exit(0);
+    }
 
     // Create trainer depending on flag.
     Trainer<GRADIENT_CLASS> *trainer;
@@ -35,5 +42,5 @@ void Run() {
 
 int main(int argc, char **argv) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    Run<MCModel, MCDatapoint, MCGradient, SGDUpdater>();
+    Run<MCModel, MCDatapoint, MCGradient>();
 }

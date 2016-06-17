@@ -67,6 +67,8 @@ DEFINE_int32(n_threads, 2, "Number of threads in parallel during training.");
 DEFINE_double(learning_rate, .001, "Learning rate.");
 DEFINE_bool(cyclades, true, "Cyclades training if true, Hogwild training if false.");
 DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
+DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
+DEFINE_bool(sgd, true, "Use the SGD update method.");
 
 #include "Model/MCModel.h"
 #include "Trainer/Trainer.h"
