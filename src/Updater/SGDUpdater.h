@@ -21,8 +21,8 @@ private:
 
     // Main update method.
     virtual void Update(Model *model, Datapoint *datapoint, int thread_num) {
-	model->ComputeGradient(datapoint, thread_gradients[thread_num]);
-	model->ApplyGradient(thread_gradients[thread_num]);
+	model->ComputeGradient(datapoint, &thread_gradients[thread_num]);
+	model->ApplyGradient(&thread_gradients[thread_num]);
     }
 };
 

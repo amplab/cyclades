@@ -14,13 +14,13 @@ class Model {
     virtual void SetUp(const std::vector<Datapoint *> &datapoints) {}
 
     // Compute and return a gradient. (represented as a void *, so it can be anything).
-    virtual void ComputeGradient(Datapoint *, MCGradient &gradient) {
+    virtual void ComputeGradient(Datapoint *, Gradient *gradient) {
 	std::cerr << "Model: ComputeGradient is not implemented" << std::endl;
 	exit(0);
     }
 
     // Apply gradient to model.
-    virtual void ApplyGradient(MCGradient &gradient) {
+    virtual void ApplyGradient(Gradient *gradient) {
 	std::cerr << "Model: ApplyGradient is not implemented" << std::endl;
 	exit(0);
     }

@@ -26,6 +26,11 @@ int GetNumCoordinateTouches()
 - Return the number of coordinates that this datapoint touches.
 ```
 
+```c++
+int GetOrder()
+- Return the order in which the datapoint should be processed. (Equivalent to datapoint id)
+```
+
 ## class Model (interface)
 
 Represents the model to train. Define any necessary extra variables to represent the model.
@@ -41,15 +46,18 @@ double ComputeLoss(const std::vector<Datapoint *> &datapoints)
 ```
 
 ```c++
-void * ComputeGradient(Datapoint *)
-- Compute gradient. Return as a void * so the gradient can be anything.
-  Make sure this method is thread safe / conflict free, since multiple threads
-  will be calling it.
+void ComputeGradient(Datapoint *, Gradient *gradient)
+- Compute gradient, storing in Gradient pointer.
 ```
 
 ```c++
 void SetUp(const std::vector<Datapoint *> &datapoints)
 - Do any kind of set up before running gradient descent.
+```
+
+```c++
+void ApplyGradient(Gradient *gradient)
+- Apply gradient stored in Gradient pointer.
 ```
 
 ## class DatasetReader
@@ -124,3 +132,6 @@ Updates model given datapoint. Examples of subclass : SGDUpdater, SAGAUpdater, e
 void Update(Model *model, Datapoint *datapoint)
 - Updates model given a single datapoint.
 ```
+
+## class Gradient
+Simple wrapper class around gradient data.

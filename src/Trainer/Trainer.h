@@ -3,7 +3,12 @@
 
 template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS, class UPDATER_CLASS>
 class Trainer {
- public:
+protected:
+    void PrintTimeLoss(Timer &timer, Model *model, const std::vector<Datapoint *> &datapoints) {
+	printf("Time(s): %f\tLoss: %lf\n", timer.Elapsed(), model->ComputeLoss(datapoints));
+    }
+
+public:
     Trainer() {
 	// Some error checking.
 	if (FLAGS_n_threads > std::thread::hardware_concurrency()) {
