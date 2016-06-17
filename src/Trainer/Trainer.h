@@ -1,7 +1,7 @@
 #ifndef _TRAINER_
 #define _TRAINER_
 
-template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS, class UPDATER_CLASS>
+template<class GRADIENT_CLASS>
 class Trainer {
 protected:
     void PrintTimeLoss(Timer &timer, Model *model, const std::vector<Datapoint *> &datapoints) {

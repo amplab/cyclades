@@ -1,8 +1,8 @@
 #ifndef _HOGWILD_TRAINER_
 #define _HOGWILD_TRAINER_
 
-template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS, class UPDATER_CLASS>
-class HogwildTrainer : public Trainer<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS, UPDATER_CLASS> {
+template<class GRADIENT_CLASS>
+class HogwildTrainer : public Trainer<GRADIENT_CLASS> {
 public:
     HogwildTrainer() {}
     ~HogwildTrainer() {}

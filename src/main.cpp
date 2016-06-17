@@ -13,12 +13,12 @@ void Run() {
     UPDATER_CLASS<GRADIENT_CLASS> *updater = new UPDATER_CLASS<GRADIENT_CLASS>(FLAGS_n_threads);
 
     // Create trainer depending on flag.
-    Trainer<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS, UPDATER_CLASS<GRADIENT_CLASS>> *trainer;
+    Trainer<GRADIENT_CLASS> *trainer;
     if (FLAGS_cyclades) {
-	trainer = new CycladesTrainer<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS, UPDATER_CLASS<GRADIENT_CLASS>>();
+	trainer = new CycladesTrainer<GRADIENT_CLASS>();
     }
     else {
-	trainer = new HogwildTrainer<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS, UPDATER_CLASS<GRADIENT_CLASS>>();
+	trainer = new HogwildTrainer<GRADIENT_CLASS>();
     }
     trainer->Train(model, datapoints, updater);
 
