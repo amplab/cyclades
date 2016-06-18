@@ -1,13 +1,14 @@
-# Require libraries
-LIBS=-lpthread -lgflags -fopenmp
-
 # Includes for gflags only for the millenium mayhem
-if [ -d "/home/eecs/agnusmaximus/gflags/build/include" ]; then \
-	LIBS += -I/home/eecs/agnusmaximus/gflags/build/include \
-fi
-if [ -d "/home/eecs/agnusmaximus/gflags/build/lib" ]; then \
-	LIBS += -L/home/eecs/agnusmaximus/gflags/build/lib \
-fi
+
+ifneq ($(wildcard /home/eecs/agnusmaximus/gflags/build/include/.*),)
+	LIBS += -I/home/eecs/agnusmaximus/gflags/build/include
+endif
+ifneq ($(wildcard /home/eecs/agnusmaximus/gflags/build/lib/.*),)
+	LIBS += -L/home/eecs/agnusmaximus/gflags/build/lib
+endif
+
+# Require libraries
+LIBS += -lpthread -lgflags -fopenmp
 
 # Flags
 FLAGS=-Ofast -std=c++11
