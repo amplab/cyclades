@@ -60,6 +60,11 @@ void ApplyGradient(Gradient *gradient)
 - Apply gradient stored in Gradient pointer.
 ```
 
+```c++
+int NumParameters()
+ - Return the number of parameters of the model.
+```
+
 ## class DatasetReader
 
 Allocates and initializes datapoints and model from given input file. Lines from the data file
@@ -107,7 +112,7 @@ DatapointPartitions(int n_threads)
 
 ```c++
 void StartNewBatch()
-- Starts a new batch.
+- Starts a new batch. Clears the thread-load balance heap.
 ```
 
 ```c++
@@ -118,6 +123,11 @@ int NumBatches()
 ```c++
 int NumDatapointsInBatch(int thread, int batch)
 - Returns the number of datapoints for a given thread in a given batch.
+```
+
+```c++
+void AddDatapointsToLeastLoadedThread(const std::vector<Datapoint *> &datapoints);
+- Adds set of datapoints to least loaded thread partition. (Least loaded within a single batch, not across batches).
 ```
 
 ```c++
