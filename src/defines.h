@@ -5,6 +5,7 @@
 #include <omp.h>
 #include <thread>
 #include <map>
+#include <cstring>
 #include <gflags/gflags.h>
 #include <iostream>
 #include <memory>

@@ -50,7 +50,7 @@ public:
 	    if (FLAGS_print_loss_per_epoch) {
 		this->PrintTimeLoss(gradient_timer, model, datapoints);
 	    }
-#pragma omp parallel for
+#pragma omp parallel for schedule(static, 1)
 	    for (int thread = 0; thread < FLAGS_n_threads; thread++) {
 		for (int batch = 0; batch < partitions.NumBatches(); batch++) {
 		    WaitForThreadsTilBatch(thread, batch);

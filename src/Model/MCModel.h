@@ -58,6 +58,7 @@ class MCModel : public Model {
 
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
 	double loss = 0;
+#pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
 	for (int i = 0; i < datapoints.size(); i++) {
 	    Datapoint *datapoint = datapoints[i];
 	    const std::vector<double> &labels = datapoint->GetLabels();
