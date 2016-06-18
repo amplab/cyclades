@@ -1,11 +1,28 @@
 #ifndef _DATAPOINT_PARTITIONS_
 #define _DATAPOINT_PARTITIONS_
 
+typedef std::tuple<int, int> ThreadLoadPair;
+struct ThreadLoadComp {
+    bool operator()(const ThreadLoadPair &s1, const ThreadLoadPair &s2) {
+	return std::get<1>(s1) > std::get<1>(s2);
+    }
+};
+
+
 class DatapointPartitions {
  private:
     int n_threads;
     std::vector<std::vector<Datapoint *>> datapoints_per_thread;
     std::vector<std::vector<int>> batch_indices;
+    std::vector<ThreadLoadPair> thread_load_heap;
+
+    void ClearThreadLoadHeap() {
+	for (int i = 0; i < n_threads;i ++) {
+	    std::get<0>(thread_load_heap[i]) = i;
+	    std::get<1>(thread_load_heap[i]) = 0;
+	}
+    }
+
  public:
     DatapointPartitions(int n_threads) {
 	this->n_threads = n_threads;
@@ -14,6 +31,8 @@ class DatapointPartitions {
 	for (int i = 0; i < n_threads; i++) {
 	    batch_indices[i].push_back(0);
 	}
+	thread_load_heap.resize(n_threads);
+	ClearThreadLoadHeap();
     }
     ~DatapointPartitions() {}
 
@@ -21,10 +40,36 @@ class DatapointPartitions {
 	for (int i = 0; i < n_threads; i++) {
 	    batch_indices[i].push_back(datapoints_per_thread[i].size());
 	}
+	ClearThreadLoadHeap();
     }
 
     void AddDatapointToThread(Datapoint * datapoint, int thread) {
 	datapoints_per_thread[thread].push_back(datapoint);
+    }
+
+    void AddDatapointsToLeastLoadedThread(const std::vector<Datapoint *> &datapoints) {
+	// Get least loaded thread.
+	ThreadLoadPair lightest_thread_load_pair = thread_load_heap.front();
+	int lightest_thread = std::get<0>(lightest_thread_load_pair);
+	int weight = std::get<1>(lightest_thread_load_pair);
+
+	// Remove lightest thread-load pair.
+	std::pop_heap(thread_load_heap.begin(),
+		      thread_load_heap.end(),
+		      ThreadLoadComp());
+	thread_load_heap.pop_back();
+
+	// Add.
+	for (auto const & datapoint : datapoints) {
+	    AddDatapointToThread(datapoint, lightest_thread);
+	}
+
+	// Add the updated thread-load pair back to the heap
+	std::get<1>(lightest_thread_load_pair) = weight+datapoints.size();
+	thread_load_heap.push_back(lightest_thread_load_pair);
+	std::push_heap(thread_load_heap.begin(),
+		       thread_load_heap.end(),
+		       ThreadLoadComp());
     }
 
     int NumBatches() {

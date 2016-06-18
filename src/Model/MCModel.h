@@ -106,6 +106,10 @@ class MCModel : public Model {
 	    model[movie_coordinate*rlength+i] = new_movie_value;
 	}
     }
+
+    int NumParameters() override {
+	return n_users + n_movies;
+    }
 };
 
 #endif

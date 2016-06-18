@@ -24,6 +24,9 @@ class Model {
 	std::cerr << "Model: ApplyGradient is not implemented" << std::endl;
 	exit(0);
     }
+
+    // Return the number of parameters of the model.
+    virtual int NumParameters() = 0;
 };
 
 #endif

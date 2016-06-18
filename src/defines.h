@@ -1,8 +1,10 @@
 #ifndef _DEFINES_
 #define _DEFINES_
 
+#include <math.h>
 #include <omp.h>
 #include <thread>
+#include <map>
 #include <gflags/gflags.h>
 #include <iostream>
 #include <memory>
@@ -69,7 +71,9 @@ DEFINE_bool(cyclades, true, "Cyclades training if true, Hogwild training if fals
 DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
 DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
 DEFINE_bool(sgd, true, "Use the SGD update method.");
+DEFINE_int32(batch_size, 5000, "Batch size for cyclades.");
 
+#include "Partitioner/CycladesPartitioner.h"
 #include "Model/MCModel.h"
 #include "Trainer/Trainer.h"
 #include "Trainer/CycladesTrainer.h"
