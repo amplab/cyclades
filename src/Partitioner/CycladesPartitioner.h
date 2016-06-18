@@ -22,7 +22,7 @@ private:
 	return a;
     }
 
-    void ComputeCC(std::vector<Datapoint *> datapoints, int start_index, int end_index,
+    void ComputeCC(const std::vector<Datapoint *> & datapoints, int start_index, int end_index,
 		   std::map<int, std::vector<Datapoint *>> &components, int *tree) {
 	// Initialize tree for union find.
 	for (int i = 0; i < model_size + FLAGS_batch_size; i++) {
@@ -40,7 +40,7 @@ private:
 	}
 
 	for (int i = 0; i < end_index-start_index; i++) {
-	    components[UnionFind(i, tree)].push_back(datapoints[i]);
+	    components[UnionFind(i, tree)].push_back(datapoints[i+start_index]);
 	}
     }
 
@@ -78,14 +78,13 @@ public:
 	for (int datapoint_count = 0; datapoint_count < datapoints_copy.size(); datapoint_count += FLAGS_batch_size) {
 	    // Current batch index.
 	    int batch_index = datapoint_count / FLAGS_batch_size;
+	    int start = datapoint_count;
+	    int end = std::min(datapoint_count + FLAGS_batch_size, (int)datapoints_copy.size());
 
 	    // Compute components.
-	    ComputeCC(datapoints_copy, datapoint_count,
-		      std::min(datapoint_count+FLAGS_batch_size,
-			       (int)datapoints_copy.size()),
+	    ComputeCC(datapoints_copy, start, end,
 		      components[batch_index],
 		      tree[omp_get_thread_num()]);
-
 	}
 
 	// Load balance the connected components (load balance within the batch, not across it).
