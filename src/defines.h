@@ -3,9 +3,11 @@
 
 #include <math.h>
 #include <omp.h>
+#include <cstdlib>
 #include <thread>
 #include <map>
 #include <cstring>
+#include <cstdlib>
 #include <gflags/gflags.h>
 #include <iostream>
 #include <memory>
