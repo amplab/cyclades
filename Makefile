@@ -1,8 +1,13 @@
-# Includes for gflags only for the millenium mayhem
-INCLUDES=-I/home/eecs/agnusmaximus/gflags/build/include/ -L/home/eecs/agnusmaximus/gflags/build/lib
-
 # Require libraries
 LIBS=-lpthread -lgflags -fopenmp
+
+# Includes for gflags only for the millenium mayhem
+if [ -d "/home/eecs/agnusmaximus/gflags/build/include" ]; then \
+	LIBS += -I/home/eecs/agnusmaximus/gflags/build/include \
+fi
+if [ -d "/home/eecs/agnusmaximus/gflags/build/lib" ]; then \
+	LIBS += -L/home/eecs/agnusmaximus/gflags/build/lib \
+fi
 
 # Flags
 FLAGS=-Ofast -std=c++11
@@ -15,4 +20,4 @@ ifdef CLANG_OMP++
 endif
 
 all:
-	$(CC) $(INCLUES) $(FLAGS) src/main.cpp $(LIBS) -o cyclades
+	$(CC) $(FLAGS) src/main.cpp $(LIBS) -o cyclades
