@@ -42,5 +42,10 @@ void Run() {
 
 int main(int argc, char **argv) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    Run<MCModel, MCDatapoint, MCGradient>();
+    if (FLAGS_matrix_completion) {
+	Run<MCModel, MCDatapoint, MCGradient>();
+    }
+    else if (FLAGS_least_squares) {
+	Run<LSModel, LSDatapoint, LSGradient>();
+    }
 }

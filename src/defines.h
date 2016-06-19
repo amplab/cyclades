@@ -68,20 +68,31 @@ void pin_to_core(size_t core) {
 #endif
 }
 
-DEFINE_string(data_file, "blank", "Input data file.");
-DEFINE_int32(n_epochs, 100, "Number of passes of data in training.");
-DEFINE_int32(n_threads, 2, "Number of threads in parallel during training.");
-DEFINE_double(learning_rate, .001, "Learning rate.");
-DEFINE_bool(cyclades, true, "Cyclades training if true, Hogwild training if false.");
-DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
-DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
-DEFINE_bool(sgd, true, "Use the SGD update method.");
-DEFINE_int32(batch_size, 5000, "Batch size for cyclades.");
+    DEFINE_string(data_file, "blank", "Input data file.");
+    DEFINE_int32(n_epochs, 100, "Number of passes of data in training.");
+    DEFINE_int32(n_threads, 2, "Number of threads in parallel during training.");
+    DEFINE_double(learning_rate, .001, "Learning rate.");
+    DEFINE_bool(cyclades, true, "Cyclades training if true, Hogwild training if false.");
+    DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
+    DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
+
+    DEFINE_int32(cyclades_batch_size, 5000, "Batch size for cyclades.");
+
+    // Flags for updating types.
+    DEFINE_bool(sgd, true, "Use the SGD update method.");
+
+    // Flags for application types.
+    DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
+    DEFINE_bool(least_squares, false, "Least squares application type.");
 
 #include "Partitioner/CycladesPartitioner.h"
 #include "Model/MCModel.h"
 #include "Trainer/Trainer.h"
 #include "Trainer/CycladesTrainer.h"
 #include "Trainer/HogwildTrainer.h"
+
+#include "Datapoint/LSDatapoint.h"
+#include "Gradient/LSGradient.h"
+#include "Model/LSModel.h"
 
 #endif

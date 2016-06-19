@@ -25,7 +25,7 @@ private:
     void ComputeCC(const std::vector<Datapoint *> & datapoints, int start_index, int end_index,
 		   std::map<int, std::vector<Datapoint *>> &components, int *tree) {
 	// Initialize tree for union find.
-	for (int i = 0; i < model_size + FLAGS_batch_size; i++) {
+	for (int i = 0; i < model_size + FLAGS_cyclades_batch_size; i++) {
 	    tree[i] = i;
 	}
 
@@ -49,7 +49,7 @@ public:
 	model_size = model->NumParameters();
 	tree = new int *[FLAGS_n_threads];
 	for (int i = 0; i < FLAGS_n_threads; i++) {
-	    tree[i] = new int[model_size + FLAGS_batch_size];
+	    tree[i] = new int[model_size + FLAGS_cyclades_batch_size];
 	}
     }
     ~CycladesPartitioner() {
@@ -70,16 +70,16 @@ public:
 	std::random_shuffle(datapoints_copy.begin(), datapoints_copy.end());
 
 	// Calculate overall number of batches.
-	int num_total_batches = ceil((double)datapoints_copy.size() / (double)FLAGS_batch_size);
+	int num_total_batches = ceil((double)datapoints_copy.size() / (double)FLAGS_cyclades_batch_size);
 
-	// Process FLAGS_batch_size pointer per iteration, computing CCS on them.
+	// Process FLAGS_cyclades_batch_size pointer per iteration, computing CCS on them.
 	std::vector<std::map<int, std::vector<Datapoint *>>> components(num_total_batches);
 	#pragma omp parallel for
-	for (int datapoint_count = 0; datapoint_count < datapoints_copy.size(); datapoint_count += FLAGS_batch_size) {
+	for (int datapoint_count = 0; datapoint_count < datapoints_copy.size(); datapoint_count += FLAGS_cyclades_batch_size) {
 	    // Current batch index.
-	    int batch_index = datapoint_count / FLAGS_batch_size;
+	    int batch_index = datapoint_count / FLAGS_cyclades_batch_size;
 	    int start = datapoint_count;
-	    int end = std::min(datapoint_count + FLAGS_batch_size, (int)datapoints_copy.size());
+	    int end = std::min(datapoint_count + FLAGS_cyclades_batch_size, (int)datapoints_copy.size());
 
 	    // Compute components.
 	    ComputeCC(datapoints_copy, start, end,
