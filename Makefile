@@ -1,5 +1,4 @@
 # Includes for gflags only for the millenium mayhem
-
 ifneq ($(wildcard /home/eecs/agnusmaximus/gflags/build/include/.*),)
 	LIBS += -I/home/eecs/agnusmaximus/gflags/build/include
 endif
