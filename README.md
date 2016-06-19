@@ -12,13 +12,13 @@ Datapoint(const string & input_line, int order)
 ```
 
 ```c++
-const std::vector<double> GetLabels()
+const std::vector<double> GetWeights()
 - Return labels for datapoint.
 ```
 
 ```c++
 const std::vector<int> GetCoordinates()
-- Get coordinates corresponding to labels of GetLabels().
+- Get coordinates corresponding to labels of GetWeights().
 ```
 
 ```c++

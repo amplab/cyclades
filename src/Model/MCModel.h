@@ -61,7 +61,7 @@ class MCModel : public Model {
 #pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
 	for (int i = 0; i < datapoints.size(); i++) {
 	    Datapoint *datapoint = datapoints[i];
-	    const std::vector<double> &labels = datapoint->GetLabels();
+	    const std::vector<double> &labels = datapoint->GetWeights();
 	    const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	    double label = labels[0];
 	    int x = coordinates[0];
@@ -78,7 +78,7 @@ class MCModel : public Model {
 
     void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
 	MCGradient *mc_gradient = (MCGradient *)gradient;
-	const std::vector<double> &labels = datapoint->GetLabels();
+	const std::vector<double> &labels = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	int user_coordinate = coordinates[0];
 	int movie_coordinate = coordinates[1];

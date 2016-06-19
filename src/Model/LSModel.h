@@ -37,7 +37,7 @@ class LSModel : public Model {
 #pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
 	for (int index = 0; index < datapoints.size(); index++) {
 	    LSDatapoint *datapoint = (LSDatapoint *)datapoints[index];
-	    const std::vector<double> &weights = datapoint->GetLabels();
+	    const std::vector<double> &weights = datapoint->GetWeights();
 	    const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	    double label = datapoint->GetLabel();
 	    double prediction = 0;
@@ -51,7 +51,7 @@ class LSModel : public Model {
 
     void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
 	LSGradient *ls_gradient = (LSGradient *)gradient;
-	const std::vector<double> &weights = datapoint->GetLabels();
+	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	double label = ((LSDatapoint *)datapoint)->GetLabel();
 	double gradient_coefficient = 0;
@@ -65,7 +65,7 @@ class LSModel : public Model {
     void ApplyGradient(Gradient *gradient) override {
 	LSGradient *ls_gradient = (LSGradient *)gradient;
 	Datapoint *datapoint = ls_gradient->datapoint;
-	const std::vector<double> &weights = datapoint->GetLabels();
+	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	for (int i = 0; i < coordinates.size(); i++) {
 	    double complete_gradient = ls_gradient->gradient_coefficient * weights[i];

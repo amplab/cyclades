@@ -29,7 +29,7 @@ public:
 
     ~LSDatapoint() {}
 
-    const std::vector<double> & GetLabels() {
+    const std::vector<double> & GetWeights() {
 	return weights;
     }
 

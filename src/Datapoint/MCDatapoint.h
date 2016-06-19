@@ -8,18 +8,18 @@
 class MCDatapoint : public Datapoint {
  private:
     double label;
-    std::vector<double> labels;
+    std::vector<double> weights;
     std::vector<int> coordinates;
 
     void Initialize(const std::string &input_line) {
-	// Allocate data for coordiantes / labels.
+	// Allocate data for coordiantes / weights.
 	coordinates.resize(2);
-	labels.resize(2);
+	weights.resize(2);
 
 	// Expected input_line format: user_coord, movie_coord, rating.
 	std::stringstream input(input_line);
 	input >> coordinates[0] >> coordinates[1] >> label;
-	labels[0] = labels[1] = label;
+	weights[0] = weights[1] = label;
     }
 
  public:
@@ -33,8 +33,8 @@ class MCDatapoint : public Datapoint {
 	coordinates[1] += offset;
     }
 
-    const std::vector<double> & GetLabels() override {
-	return labels;
+    const std::vector<double> & GetWeights() override {
+	return weights;
     }
 
     const std::vector<int> & GetCoordinates() override {
