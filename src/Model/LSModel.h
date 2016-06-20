@@ -46,7 +46,7 @@ class LSModel : public Model {
 	    }
 	    loss += (prediction - label) * (prediction - label);
 	}
-	return loss;
+	return loss / datapoints.size();
     }
 
     void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
