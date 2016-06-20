@@ -13,6 +13,10 @@ class MCGradient : public Gradient {
 	gradient_coefficient = 0;
     }
 
+    void SetUp(Model *model) override {
+
+    }
+
     MCGradient() {}
 
     ~MCGradient() {}

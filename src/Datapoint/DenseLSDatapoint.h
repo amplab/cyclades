@@ -11,7 +11,9 @@ private:
 
     void Initialize(const std::string &input_line) {
 	// Expect inputs of format: correct_label coordinate_1 weight_1 coordinate_2 weight_2...
-	std::stringstream input(input_line);
+	std::string input_line_copy = input_line;
+	input_line_copy.erase(std::remove(input_line_copy.begin(), input_line_copy.end(), '\n'), input_line_copy.end());
+	std::stringstream input(input_line_copy);
 	int cur_coordinate;
 	double cur_label;
 	input >> label;

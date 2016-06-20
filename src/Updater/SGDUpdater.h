@@ -10,9 +10,13 @@ private:
     GRADIENT_CLASS *thread_gradients;
 
  public:
-    SGDUpdater(int n_threads) : Updater<GRADIENT_CLASS>() {
+    SGDUpdater(Model *model, int n_threads) : Updater<GRADIENT_CLASS>() {
 	thread_gradients = new GRADIENT_CLASS[n_threads];
 	this->n_threads = n_threads;
+	for (int thread = 0; thread < n_threads; thread++) {
+	    thread_gradients[thread] = GRADIENT_CLASS();
+	    thread_gradients[thread].SetUp(model);
+	}
     }
 
     ~SGDUpdater() {
@@ -21,6 +25,7 @@ private:
 
     // Main update method.
     virtual void Update(Model *model, Datapoint *datapoint, int thread_num) {
+	thread_gradients[thread_num].Clear();
 	model->ComputeGradient(datapoint, &thread_gradients[thread_num]);
 	model->ApplyGradient(&thread_gradients[thread_num]);
     }

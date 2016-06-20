@@ -6,7 +6,7 @@
 template <class GRADIENT_CLASS>
 class Updater {
  public:
-    Updater(int n_threads) {}
+    Updater(Model *model, int n_threads) {}
     Updater() {}
     virtual ~Updater() {}
 

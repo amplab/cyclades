@@ -54,22 +54,21 @@ class DenseLSModel : public Model {
 	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	double label = ((DenseLSDatapoint *)datapoint)->GetLabel();
-	double gradient_coefficient = 0;
 	ls_gradient->datapoint = datapoint;
+	double gradient_coefficient = 0;
 	for (int i = 0; i < coordinates.size(); i++) {
 	    gradient_coefficient += weights[i] * model[coordinates[i]];
 	}
-	ls_gradient->gradient_coefficient = 2 * (gradient_coefficient - label);
+	gradient_coefficient = 2 * (gradient_coefficient - label);
+	for (int i = 0; i < coordinates.size(); i++) {
+	    ls_gradient->gradient[coordinates[i]] = gradient_coefficient * weights[i];
+	}
     }
 
     void ApplyGradient(Gradient *gradient) override {
 	DenseLSGradient *ls_gradient = (DenseLSGradient *)gradient;
-	Datapoint *datapoint = ls_gradient->datapoint;
-	const std::vector<double> &weights = datapoint->GetWeights();
-	const std::vector<int> &coordinates = datapoint->GetCoordinates();
-	for (int i = 0; i < coordinates.size(); i++) {
-	    double complete_gradient = ls_gradient->gradient_coefficient * weights[i];
-	    model[coordinates[i]] -= FLAGS_learning_rate * complete_gradient;
+	for (int i = 0; i < ls_gradient->n_params; i++) {
+	    model[i] -= FLAGS_learning_rate * ls_gradient->gradient[i];
 	}
     }
 

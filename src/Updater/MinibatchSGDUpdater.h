@@ -12,9 +12,14 @@ private:
     GRADIENT_CLASS *thread_gradients;
 
  public:
-    MinibatchSGDUpdater(int n_threads) : Updater<GRADIENT_CLASS>() {
+
+    MinibatchSGDUpdater(Model *model, int n_threads) : Updater<GRADIENT_CLASS>() {
 	thread_gradients = new GRADIENT_CLASS[n_threads];
 	this->n_threads = n_threads;
+	for (int thread = 0; thread < n_threads; thread++) {
+	    thread_gradients[thread] = GRADIENT_CLASS();
+	    thread_gradients[thread].SetUp(model);
+	}
     }
 
     ~MinibatchSGDUpdater() {
