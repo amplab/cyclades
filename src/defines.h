@@ -16,9 +16,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include "Datapoint/Datapoint.h"
-#include "Datapoint/MCDatapoint.h"
 #include "Gradient/Gradient.h"
-#include "Gradient/MCGradient.h"
 #include "DatasetReader.h"
 #include "Updater/Updater.h"
 #include "Updater/SGDUpdater.h"
@@ -86,10 +84,13 @@ void pin_to_core(size_t core) {
     DEFINE_bool(least_squares, false, "Least squares application type.");
 
 #include "Partitioner/CycladesPartitioner.h"
-#include "Model/MCModel.h"
 #include "Trainer/Trainer.h"
 #include "Trainer/CycladesTrainer.h"
 #include "Trainer/HogwildTrainer.h"
+
+#include "Datapoint/MCDatapoint.h"
+#include "Gradient/MCGradient.h"
+#include "Model/MCModel.h"
 
 #include "Datapoint/LSDatapoint.h"
 #include "Gradient/LSGradient.h"
