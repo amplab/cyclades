@@ -20,12 +20,16 @@ void Run() {
     }
 
     // Create trainer depending on flag.
-    Trainer<GRADIENT_CLASS> *trainer;
-    if (FLAGS_cyclades) {
+    Trainer<GRADIENT_CLASS> *trainer = NULL;
+    if (FLAGS_cyclades_trainer) {
 	trainer = new CycladesTrainer<GRADIENT_CLASS>();
     }
-    else {
+    else if (FLAGS_hogwild_trainer) {
 	trainer = new HogwildTrainer<GRADIENT_CLASS>();
+    }
+    if (!trainer) {
+	std::cerr << "Main: training method not chosen." << std::endl;
+	exit(0);
     }
     trainer->Train(model, datapoints, updater);
 
