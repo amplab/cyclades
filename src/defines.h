@@ -74,8 +74,6 @@ void pin_to_core(size_t core) {
     DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
     DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
 
-    DEFINE_int32(cyclades_batch_size, 5000, "Batch size for cyclades.");
-
     // Flags for updating types.
     DEFINE_bool(sgd, true, "Use the SGD update method.");
 

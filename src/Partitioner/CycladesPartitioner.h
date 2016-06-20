@@ -1,6 +1,8 @@
 #ifndef _CYCLADES_PARTITIONER_
 #define _CYCLADES_PARTITIONER_
 
+DEFINE_int32(cyclades_batch_size, 5000, "Batch size for cyclades.");
+
 #include "../DatapointPartitions/DatapointPartitions.h"
 #include "Partitioner.h"
 
