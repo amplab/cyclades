@@ -14,6 +14,9 @@ void Run() {
     if (FLAGS_sgd) {
 	updater = new SGDUpdater<GRADIENT_CLASS>(FLAGS_n_threads);
     }
+    else if (FLAGS_minibatch_sgd) {
+	updater = new MinibatchSGDUpdater<GRADIENT_CLASS>(FLAGS_n_threads);
+    }
     if (!updater) {
 	std::cerr << "Main: updater class not chosen." << std::endl;
 	exit(0);
@@ -26,6 +29,9 @@ void Run() {
     }
     else if (FLAGS_hogwild_trainer) {
 	trainer = new HogwildTrainer<GRADIENT_CLASS>();
+    }
+    else if (FLAGS_minibatch_trainer) {
+	trainer = new MinibatchTrainer<GRADIENT_CLASS>();
     }
     if (!trainer) {
 	std::cerr << "Main: training method not chosen." << std::endl;

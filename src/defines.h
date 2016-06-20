@@ -20,6 +20,7 @@
 #include "DatasetReader.h"
 #include "Updater/Updater.h"
 #include "Updater/SGDUpdater.h"
+#include "Updater/MinibatchSGDUpdater.h"
 #include "DatapointPartitions/DatapointPartitions.h"
 #include "Partitioner/Partitioner.h"
 #include "Partitioner/BasicPartitioner.h"
@@ -79,7 +80,8 @@ void pin_to_core(size_t core) {
     DEFINE_bool(minibatch_trainer, false, "Minibatch training method (parallel).");
 
     // Flags for updating types.
-    DEFINE_bool(sgd, true, "Use the SGD update method.");
+    DEFINE_bool(sgd, false, "Use the hogwild-style SGD update method.");
+    DEFINE_bool(minibatch_sgd, false, "Use the minibatch SGD update method.");
 
     // Flags for application types.
     DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
@@ -89,6 +91,7 @@ void pin_to_core(size_t core) {
 #include "Trainer/Trainer.h"
 #include "Trainer/CycladesTrainer.h"
 #include "Trainer/HogwildTrainer.h"
+#include "Trainer/MinibatchTrainer.h"
 
 #include "Datapoint/MCDatapoint.h"
 #include "Gradient/MCGradient.h"

@@ -143,6 +143,11 @@ void Update(Model *model, Datapoint *datapoint)
 - Updates model given a single datapoint.
 ```
 
+```c++
+void UpdateMultiple(Model *model, DatapointPartitions &partitions, int meta_batch, int thread_num)
+- Update the whole metabatches (so multiple datapoints).
+```
+
 ## class Gradient
 Simple wrapper class around gradient data.
 

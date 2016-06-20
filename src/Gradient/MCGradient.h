@@ -8,6 +8,11 @@ class MCGradient : public Gradient {
     double gradient_coefficient;
     Datapoint *datapoint;
 
+    void Clear() override {
+	datapoint = NULL;
+	gradient_coefficient = 0;
+    }
+
     MCGradient() {}
 
     ~MCGradient() {}
