@@ -36,11 +36,10 @@ private:
 	// Note: Meta batch is the current batch used potentially by cyclades / hogwild.
 	int meta_batch_size = partitions.NumDatapointsInBatch(thread_num, meta_batch);
 
-	// Clear sum of gradients.
-	thread_gradients[thread_num].Clear();
-
 	for (int i = 0; i < meta_batch_size; i += FLAGS_minibatch_batch_size) {
-	    for (int index = 0; index < std::min(i+FLAGS_minibatch_batch_size, meta_batch_size); index++) {
+            // Clear sum of gradients.
+            thread_gradients[thread_num].Clear();
+	    for (int index = i; index < std::min(i+FLAGS_minibatch_batch_size, meta_batch_size); index++) {
 		Datapoint *datapoint = partitions.GetDatapoint(thread_num, meta_batch, index);
 		model->ComputeGradient(datapoint, &thread_gradients[thread_num]);
 	    }
