@@ -1,9 +1,9 @@
-#ifndef _LSMODEL_
-#define _LSMODEL_
+#ifndef _DENSELSMODEL_
+#define _DENSELSMODEL_
 
 #include "Model.h"
 
-class LSModel : public Model {
+class DenseLSModel : public Model {
  private:
     int n_parameters;
     double *model;
@@ -20,11 +20,11 @@ class LSModel : public Model {
     }
 
  public:
-    LSModel(const std::string &input_line) {
+    DenseLSModel(const std::string &input_line) {
 	Initialize(input_line);
     }
 
-    ~LSModel() {
+    ~DenseLSModel() {
 	delete [] model;
     }
 
@@ -36,7 +36,7 @@ class LSModel : public Model {
 	double loss = 0;
 #pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
 	for (int index = 0; index < datapoints.size(); index++) {
-	    LSDatapoint *datapoint = (LSDatapoint *)datapoints[index];
+	    DenseLSDatapoint *datapoint = (DenseLSDatapoint *)datapoints[index];
 	    const std::vector<double> &weights = datapoint->GetWeights();
 	    const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	    double label = datapoint->GetLabel();
@@ -50,10 +50,10 @@ class LSModel : public Model {
     }
 
     void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
-	LSGradient *ls_gradient = (LSGradient *)gradient;
+	DenseLSGradient *ls_gradient = (DenseLSGradient *)gradient;
 	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
-	double label = ((LSDatapoint *)datapoint)->GetLabel();
+	double label = ((DenseLSDatapoint *)datapoint)->GetLabel();
 	double gradient_coefficient = 0;
 	ls_gradient->datapoint = datapoint;
 	for (int i = 0; i < coordinates.size(); i++) {
@@ -63,7 +63,7 @@ class LSModel : public Model {
     }
 
     void ApplyGradient(Gradient *gradient) override {
-	LSGradient *ls_gradient = (LSGradient *)gradient;
+	DenseLSGradient *ls_gradient = (DenseLSGradient *)gradient;
 	Datapoint *datapoint = ls_gradient->datapoint;
 	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();

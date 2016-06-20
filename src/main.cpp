@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     if (FLAGS_matrix_completion) {
 	Run<MCModel, MCDatapoint, MCGradient>();
     }
-    else if (FLAGS_least_squares) {
-	Run<LSModel, LSDatapoint, LSGradient>();
+    else if (FLAGS_dense_least_squares) {
+	Run<DenseLSModel, DenseLSDatapoint, DenseLSGradient>();
     }
 }

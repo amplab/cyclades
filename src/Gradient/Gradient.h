@@ -5,6 +5,10 @@ class Gradient {
  public:
     Gradient() {}
     virtual ~Gradient() {}
+
+    virtual void Add(const Gradient &other) {
+	std::cerr << "Gradient: Add is not implemented." << std::endl;
+    }
 };
 
 #endif

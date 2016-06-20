@@ -79,7 +79,7 @@ void pin_to_core(size_t core) {
 
     // Flags for application types.
     DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
-    DEFINE_bool(least_squares, false, "Least squares application type.");
+    DEFINE_bool(dense_least_squares, false, "Dense least squares application type.");
 
 #include "Partitioner/CycladesPartitioner.h"
 #include "Trainer/Trainer.h"
@@ -90,8 +90,8 @@ void pin_to_core(size_t core) {
 #include "Gradient/MCGradient.h"
 #include "Model/MCModel.h"
 
-#include "Datapoint/LSDatapoint.h"
-#include "Gradient/LSGradient.h"
-#include "Model/LSModel.h"
+#include "Datapoint/DenseLSDatapoint.h"
+#include "Gradient/DenseLSGradient.h"
+#include "Model/DenseLSModel.h"
 
 #endif

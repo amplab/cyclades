@@ -10,11 +10,6 @@ class MCGradient : public Gradient {
 
     MCGradient() {}
 
-    MCGradient(Datapoint *datapoint) {
-	gradient_coefficient = 0;
-	this->datapoint = datapoint;
-    }
-
     ~MCGradient() {}
 };
 

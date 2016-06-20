@@ -145,3 +145,8 @@ void Update(Model *model, Datapoint *datapoint)
 
 ## class Gradient
 Simple wrapper class around gradient data.
+
+```c++
+void Add(const Gradient &other)
+- Adds current gradient with other gradient. Optional.
+```

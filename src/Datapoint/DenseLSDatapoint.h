@@ -1,9 +1,9 @@
-#ifndef _LSDATAPOINT_
-#define _LSDATAPOINT_
+#ifndef _DENSELSDATAPOINT_
+#define _DENSELSDATAPOINT_
 
 #include "Datapoint.h"
 
-class LSDatapoint : public Datapoint {
+class DenseLSDatapoint : public Datapoint {
 private:
     double label;
     std::vector<double> weights;
@@ -23,11 +23,11 @@ private:
     }
 
 public:
-    LSDatapoint(const std::string &input_line, int order) : Datapoint(input_line, order) {
+    DenseLSDatapoint(const std::string &input_line, int order) : Datapoint(input_line, order) {
 	Initialize(input_line);
     }
 
-    ~LSDatapoint() {}
+    ~DenseLSDatapoint() {}
 
     const std::vector<double> & GetWeights() {
 	return weights;
