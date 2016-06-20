@@ -3,7 +3,7 @@
 
 #include "Updater.h"
 
-DEFINE_int32(minibatch_batch_size, 100, "Minibatch batch size.");
+DEFINE_int32(minibatch_batch_size, 10, "Minibatch batch size.");
 
 template <class GRADIENT_CLASS>
 class MinibatchSGDUpdater : public Updater<GRADIENT_CLASS> {
@@ -41,10 +41,8 @@ private:
 
 	for (int i = 0; i < meta_batch_size; i += FLAGS_minibatch_batch_size) {
 	    for (int index = 0; index < std::min(i+FLAGS_minibatch_batch_size, meta_batch_size); index++) {
-		GRADIENT_CLASS cur_gradient;
 		Datapoint *datapoint = partitions.GetDatapoint(thread_num, meta_batch, index);
-		model->ComputeGradient(datapoint, &cur_gradient);
-		thread_gradients[thread_num].Add(cur_gradient);
+		model->ComputeGradient(datapoint, &thread_gradients[thread_num]);
 	    }
 	    model->ApplyGradient(&thread_gradients[thread_num]);
 	}

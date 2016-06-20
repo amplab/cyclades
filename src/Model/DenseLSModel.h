@@ -61,7 +61,7 @@ class DenseLSModel : public Model {
 	}
 	gradient_coefficient = 2 * (gradient_coefficient - label);
 	for (int i = 0; i < coordinates.size(); i++) {
-	    ls_gradient->gradient[coordinates[i]] = gradient_coefficient * weights[i];
+	    ls_gradient->gradient[coordinates[i]] += gradient_coefficient * weights[i];
 	}
     }
 
