@@ -36,7 +36,7 @@ class DenseLSGradient : public Gradient {
 
     ~DenseLSGradient() {
 	if (gradient) {
-	    //free(gradient);
+	    free(gradient);
 	}
     }
 };
