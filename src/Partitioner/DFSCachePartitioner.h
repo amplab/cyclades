@@ -24,8 +24,11 @@ class DFSCachePartitioner : public Partitioner {
 	    }
 	}
 
+	DatapointPartitions partitions(n_threads);
+	int n_points_per_thread = datapoints.size() / n_threads + 1;
+	int n_nodes_processed_so_far = 0;
+
 	// Perform dfs on the graph.
-	std::vector<int> datapoint_permutation;
 	std::vector<int> dfs_stack;
 	std::set<int> visited_nodes;
 	dfs_stack.push_back(datapoints[0]->GetOrder());
@@ -37,22 +40,11 @@ class DFSCachePartitioner : public Partitioner {
 	    }
 	    visited_nodes.insert(cur_node);
 	    if (cur_node < n_datapoints) {
-		datapoint_permutation.push_back(cur_node);
+		int cur_assigned_thread = n_nodes_processed_so_far++ / n_points_per_thread;
+		partitions.AddDatapointToThread(datapoints[cur_node], cur_assigned_thread);
 	    }
 	    for (auto const & neighbor : graph[cur_node]) {
 		dfs_stack.push_back(neighbor);
-	    }
-	}
-
-	// Given order, order datapoints by permutation.
-	DatapointPartitions partitions(n_threads);
-	int n_points_per_thread = datapoints.size() / n_threads;
-	for (int thread = 0; thread < n_threads; thread++) {
-	    int start = n_points_per_thread * thread;
-	    int end = n_points_per_thread * (thread+1);
-	    if (thread == n_threads-1) end = datapoints.size();
-	    for (int datapoint_count = start; datapoint_count < end; datapoint_count++) {
-		partitions.AddDatapointToThread(datapoints[datapoint_permutation[datapoint_count]], thread);
 	    }
 	}
 	return partitions;
