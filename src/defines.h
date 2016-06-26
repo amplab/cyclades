@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <thread>
 #include <map>
+#include <set>
 #include <cstring>
 #include <cstdlib>
 #include <gflags/gflags.h>
@@ -75,6 +76,7 @@ void pin_to_core(size_t core) {
     DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
 
     // Flags for training types.
+    DEFINE_bool(cache_efficient_hogwild_trainer, false, "Hogwild training method with cache friendly datapoint ordering (parallel).");
     DEFINE_bool(cyclades_trainer, false, "Cyclades training method (parallel).");
     DEFINE_bool(hogwild_trainer, false, "Hogwild training method (parallel).");
     DEFINE_bool(minibatch_trainer, false, "Minibatch training method (parallel).");
@@ -88,9 +90,12 @@ void pin_to_core(size_t core) {
     DEFINE_bool(dense_least_squares, false, "Dense least squares application type.");
 
 #include "Partitioner/CycladesPartitioner.h"
+#include "Partitioner/DFSCachePartitioner.h"
+//#include "Partitioner/GraphCutsCachePartitioner.h"
 #include "Trainer/Trainer.h"
 #include "Trainer/CycladesTrainer.h"
 #include "Trainer/HogwildTrainer.h"
+#include "Trainer/CacheEfficientHogwildTrainer.h"
 #include "Trainer/MinibatchTrainer.h"
 
 #include "Datapoint/MCDatapoint.h"
