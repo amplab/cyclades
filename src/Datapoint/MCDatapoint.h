@@ -33,11 +33,11 @@ class MCDatapoint : public Datapoint {
 	coordinates[1] += offset;
     }
 
-    const std::vector<double> & GetWeights() override {
+    std::vector<double> & GetWeights() override {
 	return weights;
     }
 
-    const std::vector<int> & GetCoordinates() override {
+    std::vector<int> & GetCoordinates() override {
 	return coordinates;
     }
 

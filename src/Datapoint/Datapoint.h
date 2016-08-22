@@ -12,10 +12,10 @@ class Datapoint {
     virtual ~Datapoint() {}
 
     // Get labels corresponding to the corresponding coordinates of GetCoordinates().
-    virtual const std::vector<double> & GetWeights() = 0;
+    virtual std::vector<double> & GetWeights() = 0;
 
     // Get coordinates corresponding to labels of GetWeights().
-    virtual const std::vector<int> & GetCoordinates() = 0;
+    virtual std::vector<int> & GetCoordinates() = 0;
 
     // Get number of coordinates accessed by the datapoint.
     virtual int GetNumCoordinateTouches() = 0;

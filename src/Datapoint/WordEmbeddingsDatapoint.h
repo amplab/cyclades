@@ -26,11 +26,11 @@ class WordEmbeddingsDatapoint : public Datapoint {
     }
     ~WordEmbeddingsDatapoint() {}
 
-    const std::vector<double> & GetWeights() override {
+    std::vector<double> & GetWeights() override {
 	return weights;
     }
 
-    const std::vector<int> & GetCoordinates() override {
+    std::vector<int> & GetCoordinates() override {
 	return coordinates;
     }
 

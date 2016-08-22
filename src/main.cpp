@@ -1,3 +1,5 @@
+// Sample call: ./cyclades -matrix_inverse -n_threads=2  -cyclades_trainer  -cyclades_batch_size=500  -learning_rate=.000001 --print_partition_time -n_epochs=20 -sgd -print_loss_per_epoch --data_file="data/nh2010/nh2010.data"
+
 #include <iostream>
 #include "defines.h"
 
@@ -63,5 +65,8 @@ int main(int argc, char **argv) {
     }
     else if (FLAGS_word_embeddings) {
 	Run<WordEmbeddingsModel, WordEmbeddingsDatapoint, WordEmbeddingsGradient>();
+    }
+    else if (FLAGS_matrix_inverse) {
+	Run<MatrixInverseModel, MatrixInverseDatapoint, MatrixInverseGradient>();
     }
 }

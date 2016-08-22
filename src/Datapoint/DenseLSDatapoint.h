@@ -31,11 +31,11 @@ public:
 
     ~DenseLSDatapoint() {}
 
-    const std::vector<double> & GetWeights() {
+    std::vector<double> & GetWeights() {
 	return weights;
     }
 
-    const std::vector<int> & GetCoordinates() {
+    std::vector<int> & GetCoordinates() {
 	return coordinates;
     }
 

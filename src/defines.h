@@ -88,7 +88,8 @@ DEFINE_bool(minibatch_sgd, false, "Use the minibatch SGD update method.");
 // Flags for application types.
 DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
 DEFINE_bool(dense_least_squares, false, "Dense least squares application type.");
-DEFINE_bool(word_embeddings, false, "W2V applicaiton type.");
+DEFINE_bool(word_embeddings, false, "W2V application type.");
+DEFINE_bool(matrix_inverse, false, "Matrix inverse application type.");
 
 #include "Partitioner/CycladesPartitioner.h"
 #include "Partitioner/DFSCachePartitioner.h"
@@ -110,5 +111,9 @@ DEFINE_bool(word_embeddings, false, "W2V applicaiton type.");
 #include "Datapoint/WordEmbeddingsDatapoint.h"
 #include "Gradient/WordEmbeddingsGradient.h"
 #include "Model/WordEmbeddingsModel.h"
+
+#include "Datapoint/MatrixInverseDatapoint.h"
+#include "Gradient/MatrixInverseGradient.h"
+#include "Model/MatrixInverseModel.h"
 
 #endif
