@@ -68,26 +68,27 @@ void pin_to_core(size_t core) {
 #endif
 }
 
-    DEFINE_string(data_file, "blank", "Input data file.");
-    DEFINE_int32(n_epochs, 100, "Number of passes of data in training.");
-    DEFINE_int32(n_threads, 2, "Number of threads in parallel during training.");
-    DEFINE_double(learning_rate, .001, "Learning rate.");
-    DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
-    DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
+DEFINE_string(data_file, "blank", "Input data file.");
+DEFINE_int32(n_epochs, 100, "Number of passes of data in training.");
+DEFINE_int32(n_threads, 2, "Number of threads in parallel during training.");
+DEFINE_double(learning_rate, .001, "Learning rate.");
+DEFINE_bool(print_loss_per_epoch, false, "Should compute and print loss every epoch.");
+DEFINE_bool(print_partition_time, false, "Should print time taken to distribute datapoints across threads.");
 
-    // Flags for training types.
-    DEFINE_bool(cache_efficient_hogwild_trainer, false, "Hogwild training method with cache friendly datapoint ordering (parallel).");
-    DEFINE_bool(cyclades_trainer, false, "Cyclades training method (parallel).");
-    DEFINE_bool(hogwild_trainer, false, "Hogwild training method (parallel).");
-    DEFINE_bool(minibatch_trainer, false, "Minibatch training method (parallel).");
+// Flags for training types.
+DEFINE_bool(cache_efficient_hogwild_trainer, false, "Hogwild training method with cache friendly datapoint ordering (parallel).");
+DEFINE_bool(cyclades_trainer, false, "Cyclades training method (parallel).");
+DEFINE_bool(hogwild_trainer, false, "Hogwild training method (parallel).");
+DEFINE_bool(minibatch_trainer, false, "Minibatch training method (parallel).");
 
-    // Flags for updating types.
-    DEFINE_bool(sgd, false, "Use the hogwild-style SGD update method.");
-    DEFINE_bool(minibatch_sgd, false, "Use the minibatch SGD update method.");
+// Flags for updating types.
+DEFINE_bool(sgd, false, "Use the hogwild-style SGD update method.");
+DEFINE_bool(minibatch_sgd, false, "Use the minibatch SGD update method.");
 
-    // Flags for application types.
-    DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
-    DEFINE_bool(dense_least_squares, false, "Dense least squares application type.");
+// Flags for application types.
+DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
+DEFINE_bool(dense_least_squares, false, "Dense least squares application type.");
+DEFINE_bool(word_embeddings, false, "W2V applicaiton type.");
 
 #include "Partitioner/CycladesPartitioner.h"
 #include "Partitioner/DFSCachePartitioner.h"
@@ -105,5 +106,9 @@ void pin_to_core(size_t core) {
 #include "Datapoint/DenseLSDatapoint.h"
 #include "Gradient/DenseLSGradient.h"
 #include "Model/DenseLSModel.h"
+
+#include "Datapoint/WordEmbeddingsDatapoint.h"
+#include "Gradient/WordEmbeddingsGradient.h"
+#include "Model/WordEmbeddingsModel.h"
 
 #endif

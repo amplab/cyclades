@@ -61,4 +61,7 @@ int main(int argc, char **argv) {
     else if (FLAGS_dense_least_squares) {
 	Run<DenseLSModel, DenseLSDatapoint, DenseLSGradient>();
     }
+    else if (FLAGS_word_embeddings) {
+	Run<WordEmbeddingsModel, WordEmbeddingsDatapoint, WordEmbeddingsGradient>();
+    }
 }
