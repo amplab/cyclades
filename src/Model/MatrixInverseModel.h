@@ -154,10 +154,29 @@ public:
     }
 
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
-	return 0;
+	double loss = 0;
+	double sum_sqr = 0, second = 0;
+	for (int i = 0; i < n_coords; i++) {
+	    second += model[i] * B[i];
+	    sum_sqr += model[i] * model[i];
+	}
+#pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
+	for (int i = 0; i < n_coords; i++) {
+	    double ai_t_x = 0;
+	    double first = sum_sqr * c_norm * lambda;
+	    for (int j = 0; j < datapoints[i]->GetWeights().size(); j++) {
+		int index = datapoints[i]->GetCoordinates()[j];
+		double weight = datapoints[i]->GetWeights()[j];
+		ai_t_x += model[index] * weight;
+	    }
+	    first -= ai_t_x * ai_t_x;
+	    loss += first / 2 - second / n_coords;
+	}
+	return loss;
     }
 
     void ComputeGradient(Datapoint *datapoint, Gradient *gradient, int thread_num) override {
+
 	return;
     }
 

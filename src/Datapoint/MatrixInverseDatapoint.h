@@ -8,6 +8,7 @@ class MatrixInverseDatapoint : public Datapoint {
     std::vector<int> coordinates;
 
     void Initialize(const std::string &input_line) {
+
 	std::stringstream input(input_line);
 
 	// Expect format:
@@ -16,7 +17,11 @@ class MatrixInverseDatapoint : public Datapoint {
 	while (input) {
 	    int index;
 	    double weight;
-	    input >> index >> weight;
+	    input >> index;
+	    if (!input) {
+		break;
+	    }
+	    input >> weight;
 	    coordinates.push_back(index);
 	    weights.push_back(weight);
 	}

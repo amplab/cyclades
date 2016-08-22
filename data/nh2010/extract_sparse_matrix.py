@@ -23,11 +23,11 @@ for line in f:
         node_count += 1
 
     if node_id[c1] not in m:
-        m[node_id[c1]] = []
+        m[node_id[c1]] = set()
     if node_id[c2] not in m:
-        m[node_id[c2]] = []
-    m[node_id[c1]].append((node_id[c2], weight))
-    m[node_id[c2]].append((node_id[c1], weight))
+        m[node_id[c2]] = set()
+    m[node_id[c1]].add((node_id[c2], weight))
+    m[node_id[c2]].add((node_id[c1], weight))
 
 print("%d" % node_count, file=f_out)
 for i in range(node_count):
