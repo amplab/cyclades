@@ -1,6 +1,8 @@
 #ifndef _MODEL_
 #define _MODEL_
 
+#include "../DatapointPartitions/DatapointPartitions.h"
+
 class Model {
  public:
     Model() {}
@@ -13,8 +15,12 @@ class Model {
     // Do some set up with the model and datapoints before running gradient descent.
     virtual void SetUp(const std::vector<Datapoint *> &datapoints) {}
 
+    // Do some set up with the model given partitioning scheme before running the trainer.
+    virtual void SetUpWithPartitions(DatapointPartitions &partitions) {}
+
     // Compute and return a gradient. (represented as a void *, so it can be anything).
-    virtual void ComputeGradient(Datapoint *, Gradient *gradient) {
+    // Thread num is the thread number executing the gradient computation.
+    virtual void ComputeGradient(Datapoint *, Gradient *gradient, int thread_num) {
 	std::cerr << "Model: ComputeGradient is not implemented" << std::endl;
 	exit(0);
     }
@@ -24,6 +30,9 @@ class Model {
 	std::cerr << "Model: ApplyGradient is not implemented" << std::endl;
 	exit(0);
     }
+
+    // Do any sort of extra computation at the end of an epoch.
+    virtual void EpochFinish() {}
 
     // Return the number of parameters of the model.
     virtual int NumParameters() = 0;

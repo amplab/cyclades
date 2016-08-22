@@ -76,7 +76,7 @@ class MCModel : public Model {
 	return loss / datapoints.size();
     }
 
-    void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
+    void ComputeGradient(Datapoint * datapoint, Gradient *gradient, int thread_num) override {
 	MCGradient *mc_gradient = (MCGradient *)gradient;
 	const std::vector<double> &labels = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();

@@ -2,6 +2,7 @@
 #define _WORDEMBEDDINGSMODEL_
 
 #include <sstream>
+#include "../DatapointPartitions/DatapointPartitions.h"
 #include "Model.h"
 
 DEFINE_int32(vec_length, 30, "Length of word embeddings vector in w2v.");
@@ -9,6 +10,9 @@ DEFINE_int32(vec_length, 30, "Length of word embeddings vector in w2v.");
 class WordEmbeddingsModel : public Model {
  private:
     double *model;
+    double C;
+    std::vector<std::vector<double> > c_sum_mult1, c_sum_mult2;
+    std::vector<double> c_thread_index_tracker;
     int n_words;
     int w2v_length;
 
@@ -33,6 +37,8 @@ class WordEmbeddingsModel : public Model {
 	    exit(0);
 	}
 
+	C = 0;
+
 	// Initialize private model.
 	InitializePrivateModel();
     }
@@ -46,8 +52,20 @@ class WordEmbeddingsModel : public Model {
 	delete model;
     }
 
-    void SetUp(const std::vector<Datapoint *> &datapoints) override {
-	// TODO: add C tracking.
+    void SetUpWithPartitions(DatapointPartitions &partitions) override {
+	// Initialize C_sum_mult variables.
+	c_sum_mult1.resize(FLAGS_n_threads);
+	c_sum_mult2.resize(FLAGS_n_threads);
+	c_thread_index_tracker.resize(FLAGS_n_threads);
+	// First calculate number of datapoints per thread.
+	for (int thread = 0; thread < FLAGS_n_threads; thread++) {
+	    int n_datapoints_for_thread = 0;
+	    for (int batch = 0; batch < partitions.NumBatches(); batch++) {
+		n_datapoints_for_thread += partitions.NumDatapointsInBatch(thread, batch);
+	    }
+	    c_sum_mult1[thread].resize(n_datapoints_for_thread);
+	    c_sum_mult2[thread].resize(n_datapoints_for_thread);
+	}
     }
 
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
@@ -65,12 +83,12 @@ class WordEmbeddingsModel : public Model {
 		cross_product += (model[x*w2v_length+j]+model[y*w2v_length+j]) *
 		    (model[y*w2v_length+j]+model[y*w2v_length+j]);
 	    }
-	    loss += weight * (log(weight) - cross_product) * (log(weight) - cross_product);
+	    loss += weight * (log(weight) - cross_product - C) * (log(weight) - cross_product - C);
 	}
 	return loss / datapoints.size();
     }
 
-    void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
+    void ComputeGradient(Datapoint * datapoint, Gradient *gradient, int thread_num) override {
 	WordEmbeddingsGradient *w2v_gradient = (WordEmbeddingsGradient *)gradient;
 	const std::vector<double> &labels = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
@@ -79,11 +97,17 @@ class WordEmbeddingsModel : public Model {
 	double weight = labels[0];
 	w2v_gradient->gradient_coefficient = 0;
 	w2v_gradient->datapoint = datapoint;
+	double norm = 0;
 	for (int i = 0; i < w2v_length; i++) {
-	    w2v_gradient->gradient_coefficient += (model[coord1*w2v_length+i] + model[coord2*w2v_length+i]) *
+	    norm += (model[coord1*w2v_length+i] + model[coord2*w2v_length+i]) *
 		(model[coord1*w2v_length+i] + model[coord2*w2v_length+i]);
 	}
-	w2v_gradient->gradient_coefficient = 2 * weight * (log(weight) - w2v_gradient->gradient_coefficient);
+	w2v_gradient->gradient_coefficient = 2 * weight * (log(weight) - norm - C);
+
+	// Update c_sum_mults to calculate C.
+	int index = c_thread_index_tracker[thread_num]++;
+	c_sum_mult1[thread_num][index] = weight * (log(weight) - norm);
+	c_sum_mult2[thread_num][index] = weight;
     }
 
     void ApplyGradient(Gradient *gradient) override {
@@ -98,6 +122,21 @@ class WordEmbeddingsModel : public Model {
 	    model[coord1*w2v_length+i] -= FLAGS_learning_rate * gradient;
 	    model[coord2*w2v_length+i] -= FLAGS_learning_rate * gradient;
 	}
+    }
+
+    void EpochFinish() {
+	// Update C based on C_sum_mult.
+	double C_A = 0, C_B = 0;
+	for (int thread = 0; thread < FLAGS_n_threads; thread++) {
+	    for (int index = 0; index < c_sum_mult1[thread].size(); index++) {
+		C_A += c_sum_mult1[thread][index];
+		C_B += c_sum_mult2[thread][index];
+	    }
+	}
+	C = C_A / C_B;
+
+	// Reset c sum index tracker.
+	std::fill(c_thread_index_tracker.begin(), c_thread_index_tracker.end(), 0);
     }
 
     int NumParameters() override {

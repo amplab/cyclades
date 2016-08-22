@@ -49,7 +49,7 @@ class DenseLSModel : public Model {
 	return loss / datapoints.size();
     }
 
-    void ComputeGradient(Datapoint * datapoint, Gradient *gradient) override {
+    void ComputeGradient(Datapoint * datapoint, Gradient *gradient, int thread) override {
 	DenseLSGradient *ls_gradient = (DenseLSGradient *)gradient;
 	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();

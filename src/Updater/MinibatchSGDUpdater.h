@@ -41,7 +41,7 @@ private:
             thread_gradients[thread_num].Clear();
 	    for (int index = i; index < std::min(i+FLAGS_minibatch_batch_size, meta_batch_size); index++) {
 		Datapoint *datapoint = partitions.GetDatapoint(thread_num, meta_batch, index);
-		model->ComputeGradient(datapoint, &thread_gradients[thread_num]);
+		model->ComputeGradient(datapoint, &thread_gradients[thread_num], thread_num);
 	    }
 	    model->ApplyGradient(&thread_gradients[thread_num]);
 	}

@@ -44,6 +44,8 @@ public:
 	    this->PrintPartitionTime(partition_timer);
 	}
 
+	model->SetUpWithPartitions(partitions);
+
 	// Train.
 	Timer gradient_timer;
 	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
@@ -59,6 +61,7 @@ public:
 		    }
 		}
 	    }
+	    model->EpochFinish();
 	    ClearThreadBatchIndices();
 	}
     }
