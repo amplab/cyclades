@@ -39,6 +39,11 @@ public:
 	exit(0);
     }
 
+    // Called before epoch begins.
+    virtual void EpochBegin() {
+	model->EpochBegin();
+    }
+
     // Called when the epoch ends.
     virtual void EpochFinish() {
 	model->EpochFinish();

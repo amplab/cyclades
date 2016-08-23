@@ -4,6 +4,7 @@
 class MatrixInverseGradient : public Gradient {
  public:
     double gradient_coefficient;
+    double gradient_coefficient_tilde;
     double *gradient;
     double n_params;
     Datapoint *datapoint;
@@ -11,6 +12,7 @@ class MatrixInverseGradient : public Gradient {
     void Clear() override {
 	datapoint = NULL;
 	gradient_coefficient = 0;
+	gradient_coefficient_tilde = 0;
 	memset(gradient, 0, sizeof(double) * n_params);
     }
 

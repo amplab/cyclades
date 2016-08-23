@@ -37,6 +37,9 @@ class Model {
     // since catching up at the end of an epoch requires a different order (Order N).
     virtual void CatchUp(Datapoint *datapoint, int datapoint_order, std::vector<int> &bookkeeping) {}
 
+    // Do any sort of extra computation at the beginning of an epoch.
+    virtual void EpochBegin() {}
+
     // Do any sort of extra computation at the end of an epoch.
     virtual void EpochFinish() {}
 
