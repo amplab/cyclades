@@ -44,6 +44,9 @@ public:
 	model->EpochFinish();
 	for (const auto &datapoint : datapoints) {
 	    model->CatchUp(datapoint, model->NumParameters()+1, bookkeeping);
+	    for (const auto &coordinate : datapoint->GetCoordinates()) {
+		bookkeeping[coordinate] = model->NumParameters()+1;
+	    }
 	}
 	std::fill(bookkeeping.begin(), bookkeeping.end(), 0);
     }

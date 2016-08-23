@@ -185,7 +185,7 @@ public:
 	    first -= ai_t_x * ai_t_x;
 	    loss += first / 2 - second / (double)n_coords;
 	}
-	return loss;
+	return loss + 2;
     }
 
     void ComputeGradient(Datapoint *datapoint, Gradient *gradient, int thread_num) override {
@@ -211,7 +211,7 @@ public:
 	    double weight = 0;
 	    if (m.find(i) != m.end()) weight = m[i];
 	    g->gradient[i] -= ai_t_x * weight + B[i] / n_coords;
-	    }*/
+	}*/
     }
 
     void ApplyGradient(Gradient *gradient) override {
