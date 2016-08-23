@@ -197,21 +197,6 @@ public:
 	for (int i = 0; i < coordinates.size(); i++) {
 	    g->gradient_coefficient += model[coordinates[i]] * weights[i];
 	}
-	/*MatrixInverseGradient *g = (MatrixInverseGradient *)gradient;
-	g->datapoint = datapoint;
-	std::map<int, double> m = ((MatrixInverseDatapoint *)datapoint)->coordinate_weight_map;
-	double ai_t_x = 0;
-	for (int i = 0; i < n_coords; i++) {
-	    double weight = 0;
-	    if (m.find(i) != m.end()) weight = m[i];
-	    ai_t_x += weight * model[i];
-	    g->gradient[i] = lambda * c_norm * model[i];
-	}
-	for (int i = 0; i < n_coords; i++) {
-	    double weight = 0;
-	    if (m.find(i) != m.end()) weight = m[i];
-	    g->gradient[i] -= ai_t_x * weight + B[i] / n_coords;
-	}*/
     }
 
     void ApplyGradient(Gradient *gradient) override {
@@ -225,10 +210,6 @@ public:
 		B[coordinates[i]] / n_coords;
 	    model[coordinates[i]] -= FLAGS_learning_rate * complete_gradient;
 	}
-	/*MatrixInverseGradient *g = (MatrixInverseGradient *)gradient;
-	for (int i = 0; i < n_coords; i++) {
-	    model[i] -= FLAGS_learning_rate * g->gradient[i];
-	    }*/
     }
 
     void CatchUp(Datapoint *datapoint, int order, std::vector<int> &bookkeeping) override {
