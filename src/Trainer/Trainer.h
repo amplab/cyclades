@@ -17,7 +17,7 @@ public:
 	// Some error checking.
 	if (FLAGS_n_threads > std::thread::hardware_concurrency()) {
 	    std::cerr << "Trainer: Number of threads is greater than the number of physical cores." << std::endl;
-	    exit(0);
+	    //exit(0);
 	}
 
 	// Basic set up, like pinning to core, setting number of threads.
