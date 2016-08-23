@@ -31,6 +31,10 @@ class Model {
 	exit(0);
     }
 
+    // The catch-up method to update sparse coordinates before updating
+    // them again. For sparse problems this is necessary.
+    virtual void CatchUp(Datapoint *datapoint, int datapoint_order, std::vector<int> &bookkeeping) {}
+
     // Do any sort of extra computation at the end of an epoch.
     virtual void EpochFinish() {}
 

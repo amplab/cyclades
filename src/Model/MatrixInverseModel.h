@@ -14,6 +14,7 @@ private:
     double lambda;
     double *model;
     std::vector<double> B;
+    std::vector<double> sum_powers;
 
     void Initialize(const std::string &input_line) {
 
@@ -148,9 +149,17 @@ public:
 	for (int i = 0; i < n_coords; i++) {
 	    lambda += x_k_prime[i] * 1.1 * x_k[i];
 	}
+	std::cout << lambda << std::endl;
 
 	// Free memory of transpose sparse matrix.
 	for_each(transpose.begin(), transpose.end(), std::default_delete<Datapoint>());
+
+	// Precompute sum of powers for "catching up" as this is a dense problem.
+	double sum = 0;
+	for (int i = 0; i < n_coords; i++) {
+	    sum += pow(1 - lambda * c_norm * FLAGS_learning_rate, i);
+	    sum_powers[i] = sum;
+	}
     }
 
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
@@ -161,7 +170,7 @@ public:
 	    sum_sqr += model[i] * model[i];
 	}
 #pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
-	for (int i = 0; i < n_coords; i++) {
+	for (int i = 0; i < datapoints.size(); i++) {
 	    double ai_t_x = 0;
 	    double first = sum_sqr * c_norm * lambda;
 	    for (int j = 0; j < datapoints[i]->GetWeights().size(); j++) {
@@ -176,12 +185,27 @@ public:
     }
 
     void ComputeGradient(Datapoint *datapoint, Gradient *gradient, int thread_num) override {
-
-	return;
+	MatrixInverseGradient *g = (MatrixInverseGradient *)gradient;
+	const std::vector<double> &weights = datapoint->GetWeights();
+	const std::vector<int> &coordinates = datapoint->GetCoordinates();
+	g->gradient_coefficient = 0;
+	g->datapoint = datapoint;
+	for (int i = 0; i < coordinates.size(); i++) {
+	    g->gradient_coefficient += model[coordinates[i]] * weights[i];
+	}
     }
 
     void ApplyGradient(Gradient *gradient) override {
-	return;
+	MatrixInverseGradient *g = (MatrixInverseGradient *)gradient;
+	Datapoint *datapoint = g->datapoint;
+	const std::vector<double> &weights = datapoint->GetWeights();
+	const std::vector<int> &coordinates = datapoint->GetCoordinates();
+	for (int i = 0; i < coordinates.size(); i++) {
+	    double complete_gradient = c_norm * lambda * model[coordinates[i]] -
+		g->gradient_coefficient * weights[i] -
+		B[coordinates[i]] / n_coords;
+	    model[coordinates[i]] -= FLAGS_learning_rate * complete_gradient;
+	}
     }
 
     int NumParameters() override {

@@ -13,7 +13,7 @@ private:
 
  public:
 
-    MinibatchSGDUpdater(Model *model, int n_threads) : Updater<GRADIENT_CLASS>() {
+ MinibatchSGDUpdater(Model *model, std::vector<Datapoint *> &datapoints, int n_threads) : Updater<GRADIENT_CLASS>(model, datapoints, n_threads) {
 	thread_gradients = new GRADIENT_CLASS[n_threads];
 	this->n_threads = n_threads;
 	for (int thread = 0; thread < n_threads; thread++) {

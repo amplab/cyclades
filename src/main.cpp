@@ -14,10 +14,10 @@ void Run() {
     // Create updater.
     Updater<GRADIENT_CLASS> *updater = NULL;
     if (FLAGS_sgd) {
-	updater = new SGDUpdater<GRADIENT_CLASS>(model, FLAGS_n_threads);
+	updater = new SGDUpdater<GRADIENT_CLASS>(model, datapoints, FLAGS_n_threads);
     }
     else if (FLAGS_minibatch_sgd) {
-	updater = new MinibatchSGDUpdater<GRADIENT_CLASS>(model, FLAGS_n_threads);
+	updater = new MinibatchSGDUpdater<GRADIENT_CLASS>(model, datapoints, FLAGS_n_threads);
     }
     if (!updater) {
 	std::cerr << "Main: updater class not chosen." << std::endl;

@@ -57,11 +57,11 @@ public:
 		for (int batch = 0; batch < partitions.NumBatches(); batch++) {
 		    WaitForThreadsTilBatch(thread, batch);
 		    for (int index = 0; index < partitions.NumDatapointsInBatch(thread, batch); index++) {
-			updater->Update(model, partitions.GetDatapoint(thread, batch, index), thread);
+			updater->UpdateWrapper(model, partitions.GetDatapoint(thread, batch, index), thread);
 		    }
 		}
 	    }
-	    model->EpochFinish();
+	    updater->EpochFinish();
 	    ClearThreadBatchIndices();
 	}
     }
