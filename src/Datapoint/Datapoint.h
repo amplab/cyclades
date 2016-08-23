@@ -20,6 +20,11 @@ class Datapoint {
     // Get number of coordinates accessed by the datapoint.
     virtual int GetNumCoordinateTouches() = 0;
 
+    // Set order of the datapoint.
+    virtual void SetOrder(int order) {
+	this->order = order;
+    }
+
     // Get the order of a datapoint (equivalent to id).
     virtual int GetOrder() {
 	return order;

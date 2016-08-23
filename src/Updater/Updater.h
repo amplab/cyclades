@@ -43,8 +43,9 @@ public:
     virtual void EpochFinish() {
 	model->EpochFinish();
 	for (const auto &datapoint : datapoints) {
-	    model->CatchUp(datapoint, model->NumParameters(), bookkeeping);
+	    model->CatchUp(datapoint, model->NumParameters()+1, bookkeeping);
 	}
+	std::fill(bookkeeping.begin(), bookkeeping.end(), 0);
     }
 };
 

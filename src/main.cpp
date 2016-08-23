@@ -5,6 +5,7 @@
 
 template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS>
 void Run() {
+
     // Initialize model and datapoints.
     Model *model;
     std::vector<Datapoint *> datapoints;

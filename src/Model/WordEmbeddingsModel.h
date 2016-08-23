@@ -125,6 +125,7 @@ class WordEmbeddingsModel : public Model {
     }
 
     void EpochFinish() {
+
 	// Update C based on C_sum_mult.
 	double C_A = 0, C_B = 0;
 	for (int thread = 0; thread < FLAGS_n_threads; thread++) {

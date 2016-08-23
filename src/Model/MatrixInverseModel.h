@@ -4,7 +4,7 @@
 #include <sstream>
 #include "Model.h"
 
-DEFINE_int32(random_range, 100, "Range of random numbers for initializing the model.");
+DEFINE_int32(random_range, 2, "Range of random numbers for initializing the model.");
 DEFINE_int32(n_power_iterations, 10, "Number of power iterations to run to calculate lambda.");
 
 class MatrixInverseModel : public Model {
@@ -108,6 +108,9 @@ public:
 	    for (auto &w : datapoints[dp]->GetWeights()) {
 		w /= norm_factor;
 	    }
+	    for (auto &m_w : ((MatrixInverseDatapoint *)datapoints[dp])->coordinate_weight_map) {
+		m_w.second /= norm_factor;
+	    }
 	}
 
 	// Calulate Frobenius norm of the matrix.
@@ -149,16 +152,16 @@ public:
 	for (int i = 0; i < n_coords; i++) {
 	    lambda += x_k_prime[i] * 1.1 * x_k[i];
 	}
-	std::cout << lambda << std::endl;
 
 	// Free memory of transpose sparse matrix.
 	for_each(transpose.begin(), transpose.end(), std::default_delete<Datapoint>());
 
 	// Precompute sum of powers for "catching up" as this is a dense problem.
 	double sum = 0;
+	sum_powers.push_back(0);
 	for (int i = 0; i < n_coords; i++) {
-	    sum += pow(1 - lambda * c_norm * FLAGS_learning_rate, i);
-	    sum_powers[i] = sum;
+	    sum += pow(1 - lambda * c_norm * (double)FLAGS_learning_rate, i);
+	    sum_powers.push_back(sum);
 	}
     }
 
@@ -169,6 +172,7 @@ public:
 	    second += model[i] * B[i];
 	    sum_sqr += model[i] * model[i];
 	}
+
 #pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
 	for (int i = 0; i < datapoints.size(); i++) {
 	    double ai_t_x = 0;
@@ -179,7 +183,7 @@ public:
 		ai_t_x += model[index] * weight;
 	    }
 	    first -= ai_t_x * ai_t_x;
-	    loss += first / 2 - second / n_coords;
+	    loss += first / 2 - second / (double)n_coords;
 	}
 	return loss;
     }
@@ -193,6 +197,21 @@ public:
 	for (int i = 0; i < coordinates.size(); i++) {
 	    g->gradient_coefficient += model[coordinates[i]] * weights[i];
 	}
+	/*MatrixInverseGradient *g = (MatrixInverseGradient *)gradient;
+	g->datapoint = datapoint;
+	std::map<int, double> m = ((MatrixInverseDatapoint *)datapoint)->coordinate_weight_map;
+	double ai_t_x = 0;
+	for (int i = 0; i < n_coords; i++) {
+	    double weight = 0;
+	    if (m.find(i) != m.end()) weight = m[i];
+	    ai_t_x += weight * model[i];
+	    g->gradient[i] = lambda * c_norm * model[i];
+	}
+	for (int i = 0; i < n_coords; i++) {
+	    double weight = 0;
+	    if (m.find(i) != m.end()) weight = m[i];
+	    g->gradient[i] -= ai_t_x * weight + B[i] / n_coords;
+	    }*/
     }
 
     void ApplyGradient(Gradient *gradient) override {
@@ -206,6 +225,22 @@ public:
 		B[coordinates[i]] / n_coords;
 	    model[coordinates[i]] -= FLAGS_learning_rate * complete_gradient;
 	}
+	/*MatrixInverseGradient *g = (MatrixInverseGradient *)gradient;
+	for (int i = 0; i < n_coords; i++) {
+	    model[i] -= FLAGS_learning_rate * g->gradient[i];
+	    }*/
+    }
+
+    void CatchUp(Datapoint *datapoint, int order, std::vector<int> &bookkeeping) override {
+	for (const auto &index : datapoint->GetCoordinates()) {
+	    int diff = order - bookkeeping[index] - 1;
+	    if (diff < 0) diff = 0;
+	    model[index] = model[index] * pow(1 - lambda * c_norm * FLAGS_learning_rate, diff) + sum_powers[diff] * FLAGS_learning_rate * B[index] / n_coords;
+	}
+    }
+
+    void EpochFinish() override {
+
     }
 
     int NumParameters() override {

@@ -32,7 +32,9 @@ class Model {
     }
 
     // The catch-up method to update sparse coordinates before updating
-    // them again. For sparse problems this is necessary.
+    // them again. For denser problems this is necessary.
+    // Datapoint order is passed (rather than directly accessed from datapoint)
+    // since catching up at the end of an epoch requires a different order (Order N).
     virtual void CatchUp(Datapoint *datapoint, int datapoint_order, std::vector<int> &bookkeeping) {}
 
     // Do any sort of extra computation at the end of an epoch.

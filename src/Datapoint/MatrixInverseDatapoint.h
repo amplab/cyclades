@@ -24,10 +24,12 @@ class MatrixInverseDatapoint : public Datapoint {
 	    input >> weight;
 	    coordinates.push_back(index);
 	    weights.push_back(weight);
+	    coordinate_weight_map[index] = weight;
 	}
     }
 
  public:
+    std::map<int, double> coordinate_weight_map;
 
     MatrixInverseDatapoint(const std::string &input_line, int order) : Datapoint(input_line, order) {
 	Initialize(input_line);

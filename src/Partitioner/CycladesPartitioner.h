@@ -71,6 +71,10 @@ public:
 	std::vector<Datapoint *> datapoints_copy(datapoints);
 	std::random_shuffle(datapoints_copy.begin(), datapoints_copy.end());
 
+	for (int i = 0; i < datapoints_copy.size(); i++) {
+	    datapoints_copy[i]->SetOrder(i+1);
+	}
+
 	// Calculate overall number of batches.
 	int num_total_batches = ceil((double)datapoints_copy.size() / (double)FLAGS_cyclades_batch_size);
 

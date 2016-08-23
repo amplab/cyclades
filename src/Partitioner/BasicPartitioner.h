@@ -18,6 +18,9 @@ class BasicPartitioner : public Partitioner {
 	// Shuffle the datapoints.
 	std::vector<Datapoint *> datapoints_copy(datapoints);
 	std::random_shuffle(datapoints_copy.begin(), datapoints_copy.end());
+	for (int i = 0; i < datapoints_copy.size(); i++) {
+	    datapoints_copy[i]->SetOrder(i+1);
+	}
 
 	// Calculate load per thread. Then distribute.
 	int n_points_per_thread = datapoints_copy.size() / n_threads;
