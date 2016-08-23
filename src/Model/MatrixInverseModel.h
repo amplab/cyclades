@@ -235,7 +235,8 @@ public:
 	for (const auto &index : datapoint->GetCoordinates()) {
 	    int diff = order - bookkeeping[index] - 1;
 	    if (diff < 0) diff = 0;
-	    model[index] = model[index] * pow(1 - lambda * c_norm * FLAGS_learning_rate, diff) + sum_powers[diff] * FLAGS_learning_rate * B[index] / n_coords;
+	    model[index] = model[index] * pow(1 - lambda * c_norm * FLAGS_learning_rate, diff) +
+		sum_powers[diff] * FLAGS_learning_rate * B[index] / n_coords;
 	}
     }
 
