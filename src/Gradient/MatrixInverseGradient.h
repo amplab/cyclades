@@ -5,7 +5,6 @@ class MatrixInverseGradient : public Gradient {
  public:
     double gradient_coefficient;
     double gradient_coefficient_tilde;
-    double *gradient;
     double n_params;
     Datapoint *datapoint;
 
@@ -13,19 +12,16 @@ class MatrixInverseGradient : public Gradient {
 	datapoint = NULL;
 	gradient_coefficient = 0;
 	gradient_coefficient_tilde = 0;
-	memset(gradient, 0, sizeof(double) * n_params);
     }
 
     void SetUp(Model *model) override {
 	n_params = model->NumParameters();
-	gradient = (double *)malloc(sizeof(double) * n_params);
 	Clear();
     }
 
     MatrixInverseGradient() {}
 
     ~MatrixInverseGradient() {
-	delete gradient;
     }
 };
 

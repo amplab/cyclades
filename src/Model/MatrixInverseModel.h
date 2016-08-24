@@ -243,6 +243,7 @@ public:
 	for (const auto &index : datapoint->GetCoordinates()) {
 	    int diff = order - bookkeeping[index] - 1;
 	    double spower = 0;
+	    if (diff < 0) diff = 0;
 	    if (diff >= 0)
 		spower = sum_powers[diff];
 	    double regular_catchup = model[index] * pow(1 - lambda * c_norm * FLAGS_learning_rate, diff) +
@@ -284,6 +285,7 @@ public:
 	    }
 
 	// Accumulate sums.
+#pragma omp parallel for num_threads(FLAGS_n_threads)
 	for (int i = 0; i < n_coords; i++) {
 	    for (int j = 0; j < FLAGS_n_threads; j++) {
 		sum_gradient_tilde[i] += sum_gradient_local[i*FLAGS_n_threads+j];
