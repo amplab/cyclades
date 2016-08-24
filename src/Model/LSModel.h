@@ -8,7 +8,10 @@ class LSModel : public Model {
  private:
     int n_coords;
     double *model;
-    std::vector<double> B;      // Artificial label vector.
+    double *sum_gradients;
+    std::vector<std::map<int, double> > prev_gradients;
+    // Artificial label vector.
+    std::vector<double> B;
 
     void MatrixVectorMultiply(const std::vector<Datapoint *> &datapoints,
 			      std::vector<double> &input_vector,
@@ -37,7 +40,17 @@ class LSModel : public Model {
 	// Expect a single number with n_coords.
 	std::stringstream input(input_line);
 	input >> n_coords;
+
+	// Initialize model.
 	model = (double *)malloc(sizeof(double) * n_coords);
+	memset(model, 0, sizeof(double) * n_coords);
+
+	// Initialize sum of gradients.
+	sum_gradients = (double *)malloc(sizeof(double) * n_coords);
+	memset(sum_gradients, 0, sizeof(double) * n_coords);
+
+	// Resize previous gradients.
+	prev_gradients.resize(n_coords);
     }
  public:
     LSModel(const std::string &input_line) {
@@ -96,11 +109,24 @@ class LSModel : public Model {
 	LSGradient *lsgrad = (LSGradient *)gradient;
 	Datapoint *datapoint = lsgrad->datapoint;
 	double gradient_coefficient = lsgrad->gradient_coefficient;
+	int row = ((LSDatapoint *)datapoint)->row;
 	for (int i = 0; i < datapoint->GetCoordinates().size(); i++) {
 	    int index = datapoint->GetCoordinates()[i];
 	    double weight = datapoint->GetWeights()[i];
-	    double complete_gradient = gradient_coefficient * weight;
+	    double prev_gradient = prev_gradients[row][index];
+	    double sum_gradient = sum_gradients[index];
+	    double complete_gradient = (gradient_coefficient*weight) - prev_gradient + sum_gradient / n_coords;
 	    model[index] -= FLAGS_learning_rate * complete_gradient;
+	    sum_gradients[index] += (gradient_coefficient*weight) - prev_gradient;
+	    prev_gradients[row][index] = gradient_coefficient*weight;
+	}
+    }
+
+    void CatchUp(Datapoint *datapoint, int order, std::vector<int> &bookkeeping) override {
+	for (const auto &index : datapoint->GetCoordinates()) {
+	    int diff = order - bookkeeping[index] - 1;
+	    if (diff < 0) diff = 0;
+	    model[index] -= FLAGS_learning_rate * diff * sum_gradients[index] / n_coords;
 	}
     }
 
