@@ -244,8 +244,7 @@ public:
 	    int diff = order - bookkeeping[index] - 1;
 	    double spower = 0;
 	    if (diff < 0) diff = 0;
-	    if (diff >= 0)
-		spower = sum_powers[diff];
+	    spower = sum_powers[diff];
 	    double regular_catchup = model[index] * pow(1 - lambda * c_norm * FLAGS_learning_rate, diff) +
 		spower * FLAGS_learning_rate * B[index] / n_coords;
 	    double svrg_catchup = FLAGS_learning_rate * (lambda * c_norm * model_tilde[index] - sum_gradient_tilde[index] / n_coords) * spower;
