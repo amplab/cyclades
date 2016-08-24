@@ -4,7 +4,7 @@
 #include <sstream>
 #include "Model.h"
 
-DEFINE_int32(random_range, 2, "Range of random numbers for initializing the model.");
+DEFINE_int32(random_range, 100, "Range of random numbers for initializing the model.");
 DEFINE_int32(n_power_iterations, 10, "Number of power iterations to run to calculate lambda.");
 
 class MatrixInverseModel : public Model {
