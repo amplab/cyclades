@@ -90,6 +90,10 @@ DEFINE_bool(matrix_completion, false, "Matrix completion application type.");
 DEFINE_bool(dense_least_squares, false, "Dense least squares application type.");
 DEFINE_bool(word_embeddings, false, "W2V application type.");
 DEFINE_bool(matrix_inverse, false, "Matrix inverse application type.");
+DEFINE_bool(least_squares, false, "Sparse least squares application type.");
+
+// MISC flags.
+DEFINE_int32(random_range, 100, "Range of random numbers for initializing the model.");
 
 #include "Partitioner/CycladesPartitioner.h"
 #include "Partitioner/DFSCachePartitioner.h"
@@ -115,5 +119,9 @@ DEFINE_bool(matrix_inverse, false, "Matrix inverse application type.");
 #include "Datapoint/MatrixInverseDatapoint.h"
 #include "Gradient/MatrixInverseGradient.h"
 #include "Model/MatrixInverseModel.h"
+
+#include "Datapoint/LSDatapoint.h"
+#include "Gradient/LSGradient.h"
+#include "Model/LSModel.h"
 
 #endif

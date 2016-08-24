@@ -70,4 +70,7 @@ int main(int argc, char **argv) {
     else if (FLAGS_matrix_inverse) {
 	Run<MatrixInverseModel, MatrixInverseDatapoint, MatrixInverseGradient>();
     }
+    else if (FLAGS_least_squares) {
+	Run<LSModel, LSDatapoint, LSGradient>();
+    }
 }
