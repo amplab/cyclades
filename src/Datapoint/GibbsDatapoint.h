@@ -19,6 +19,7 @@ private:
 	while (input) {
 	    int neighbor;
 	    input >> neighbor;
+	    if (!input) break;
 	    neighbors.push_back(neighbor);
 	}
     }

@@ -8,23 +8,48 @@ DEFINE_double(gibbs_beta, 1, "Inverse temperature for Ising gibbs model");
 class IsingGibbsModel : public Model {
  private:
     int n_points;
+    bool is_2d_lattice;
     int *model;
 
     void Initialize(const std::string &input_line) {
-	// Expect a single number representing # of points;
+	// Expect a single number representing # of points and whether it's a 2d lattice;
 	std::stringstream input(input_line);
-	input >> n_points;
+	input >> n_points >> is_2d_lattice;
 
 	// Create and initialize random ising gibbs model state.
+	srand(time(NULL));
 	model = (int *)malloc(sizeof(int) * n_points);
 	for (int i = 0; i < n_points; i++) {
-	    if (rand() % 2 == 0)  {
+	    //if (rand() % 2 == 0)  {
+	    if (i % 2 == 0) {
 		model[i] = -1;
 	    }
 	    else {
 		model[i] = 1;
 	    }
 	}
+    }
+
+    void Print2DState() {
+	std::string state_string = "";
+	int length = sqrt(n_points);
+	for (int i = 0; i < length; i++) {
+	    for (int j = 0; j < length; j++) {
+		if (model[i*length+j] == 1) {
+		    state_string += "1";
+		}
+		else if (model[i*length+j] == -1) {
+		    state_string += "0";
+		}
+		else {
+		    std::cerr << "IsingGibbsModel: Something went wrong..." << std::endl;
+		    exit(0);
+		}
+	    }
+	    state_string += "\n";
+	}
+	system("clear");
+	std::cout << state_string << std::endl;
     }
 
  public:
@@ -37,6 +62,9 @@ class IsingGibbsModel : public Model {
     }
 
     double ComputeLoss(const std::vector<Datapoint *> &datapoints) override {
+	if (is_2d_lattice) {
+	    Print2DState();
+	}
 	return 0;
     }
 
