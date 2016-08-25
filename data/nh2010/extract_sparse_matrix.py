@@ -14,7 +14,12 @@ m = {}
 for line in f:
     if line[0] == "%":
         continue
-    c1, c2, weight = [int(x) for x in line.strip().split()]
+    weight = 1
+    values = [int(x) for x in line.strip().split()]
+    if len(values) == 3:
+        c1, c2, weight = values
+    else:
+        c1, c2 = values
     if c1 not in node_id:
         node_id[c1] = node_count
         node_count += 1
