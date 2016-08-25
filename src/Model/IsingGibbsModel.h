@@ -17,7 +17,6 @@ class IsingGibbsModel : public Model {
 	input >> n_points >> is_2d_lattice;
 
 	// Create and initialize random ising gibbs model state.
-	srand(time(NULL));
 	model = (int *)malloc(sizeof(int) * n_points);
 	for (int i = 0; i < n_points; i++) {
 	    if (rand() % 2 == 0)  {
