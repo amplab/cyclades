@@ -1,6 +1,8 @@
 #ifndef _TRAINER_
 #define _TRAINER_
 
+DEFINE_bool(random_batch_processing, false, "Process batches in random order. Note this may disrupt catch-up.");
+
 template<class GRADIENT_CLASS>
 class Trainer {
 protected:

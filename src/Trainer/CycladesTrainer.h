@@ -46,6 +46,12 @@ public:
 
 	model->SetUpWithPartitions(partitions);
 
+	// Default batch ordering.
+	std::vector<int> batch_ordering(partitions.NumBatches());
+	for (int i = 0; i < partitions.NumBatches(); i++) {
+	    batch_ordering[i] = i;
+	}
+
 	// Train.
 	Timer gradient_timer;
 	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
@@ -53,12 +59,20 @@ public:
 		this->PrintTimeLoss(gradient_timer, model, datapoints);
 	    }
 
+	    // Random batch ordering generation.
+	    if (FLAGS_random_batch_processing) {
+		for (int i = 0; i < partitions.NumBatches(); i++) {
+		    batch_ordering[i] = rand() % partitions.NumBatches();
+		}
+	    }
+
 	    updater->EpochBegin();
 
 #pragma omp parallel for schedule(static, 1)
 	    for (int thread = 0; thread < FLAGS_n_threads; thread++) {
-		for (int batch = 0; batch < partitions.NumBatches(); batch++) {
-		    WaitForThreadsTilBatch(thread, batch);
+		for (int batch_count = 0; batch_count < partitions.NumBatches(); batch_count++) {
+		    int batch = batch_ordering[batch_count];
+		    WaitForThreadsTilBatch(thread, batch_count);
 		    for (int index = 0; index < partitions.NumDatapointsInBatch(thread, batch); index++) {
 			updater->UpdateWrapper(model, partitions.GetDatapoint(thread, batch, index), thread);
 		    }

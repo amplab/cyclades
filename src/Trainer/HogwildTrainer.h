@@ -29,10 +29,9 @@ public:
 
 #pragma omp parallel for schedule(static, 1)
 	    for (int thread = 0; thread < FLAGS_n_threads; thread++) {
-		for (int batch = 0; batch < partitions.NumBatches(); batch++) {
-		    for (int index = 0; index < partitions.NumDatapointsInBatch(thread, batch); index++) {
-			updater->UpdateWrapper(model, partitions.GetDatapoint(thread, batch, index), thread);
-		    }
+		int batch = 0; // Hogwild only has 1 batch.
+		for (int index = 0; index < partitions.NumDatapointsInBatch(thread, batch); index++) {
+		    updater->UpdateWrapper(model, partitions.GetDatapoint(thread, batch, index), thread);
 		}
 	    }
 	    updater->EpochFinish();
