@@ -20,8 +20,7 @@ class IsingGibbsModel : public Model {
 	srand(time(NULL));
 	model = (int *)malloc(sizeof(int) * n_points);
 	for (int i = 0; i < n_points; i++) {
-	    //if (rand() % 2 == 0)  {
-	    if (i % 2 == 0) {
+	    if (rand() % 2 == 0)  {
 		model[i] = -1;
 	    }
 	    else {
