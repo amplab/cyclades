@@ -73,4 +73,7 @@ int main(int argc, char **argv) {
     else if (FLAGS_least_squares) {
 	Run<LSModel, LSDatapoint, LSGradient>();
     }
+    else if (FLAGS_ising_gibbs) {
+	Run<IsingGibbsModel, GibbsDatapoint, GibbsGradient>();
+    }
 }
