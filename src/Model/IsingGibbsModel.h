@@ -156,8 +156,7 @@ class IsingGibbsModel : public Model {
 	double p1 = exp(FLAGS_gibbs_beta * (double)product_with_1);
 	double p2 = exp(FLAGS_gibbs_beta * (double)product_with_neg_1);
 	double prob_1 = p1 / (p1+p2);
-	//double selection = ThreadsafeRand(0, RAND_MAX) / (double)RAND_MAX;
-	double selection = .5;
+	double selection = ThreadsafeRand(0, RAND_MAX) / (double)RAND_MAX;
 	if (selection <= prob_1) {
 	    model[index] = 1;
 	}
