@@ -26,6 +26,20 @@ private:
 	memset(thread_batch, 0, sizeof(int) * FLAGS_n_threads);
     }
 
+    void DebugPrintPartitions(DatapointPartitions &p) {
+	for (int i = 0; i < p.NumBatches(); i++) {
+	    std::cout << "Batch " << i << std::endl;
+	    for (int j = 0; j < FLAGS_n_threads; j++) {
+		std::cout << "Thread " << j << ": ";
+		for (int k = 0; k < p.NumDatapointsInBatch(j, i); k++) {
+		    if (k != 0) std::cout << " ";
+		    std::cout << p.GetDatapoint(j, i, k)->GetOrder();
+		}
+		std::cout << std::endl;
+	    }
+	}
+    }
+
 public:
     CycladesTrainer() {
 	thread_batch = new int[FLAGS_n_threads];
