@@ -35,5 +35,5 @@ for i in range(n):
 print("%d 1" % N, file=f_out)
 for i in range(N):
     neighbor_string = " ".join([str(x) for x in list(m[i])])
-    print("%d %s" % (i, neighbor_string), file=f_out)
+    print("%d %d %s" % (i, i, neighbor_string), file=f_out)
 f_out.close()
