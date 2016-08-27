@@ -71,7 +71,7 @@ class IsingGibbsModel : public Model {
     double CompareStatesDistribution(std::vector<VertexDistribution> &d1,
 				     std::vector<VertexDistribution> &d2) {
 	double error = 0;
-	//#pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:error)
+	#pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:error)
 	for (int i = 0; i < n_points; i++) {
 	    double p1 = d1[i].n_positives / (double)(d1[i].n_positives + d1[i].n_negatives);
 	    double p2 = d2[i].n_positives / (double)(d2[i].n_positives + d2[i].n_negatives);
