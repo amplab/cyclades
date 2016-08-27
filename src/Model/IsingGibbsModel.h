@@ -1,3 +1,9 @@
+// To compare against file:
+// ./cyclades --should_compare_to_compare_distribution_file=true  --should_write_to_distribution_output_file=false  --cyclades_batch_size=800  -ising_gibbs -n_threads=1 --random_per_batch_datapoint_processing  -hogwild_trainer  -print_partition_time -n_epochs=200000 -sgd --data_file="data/gibbs/gibbs.data"
+//
+// To generate the distribution file:
+// ./cyclades --write_distribution_interval=200 --should_compare_to_compare_distribution_file=false  --should_write_to_distribution_output_file  --cyclades_batch_size=800  -ising_gibbs -n_threads=1 --random_per_batch_datapoint_processing  -hogwild_trainer  -print_partition_time -n_epochs=200000 -sgd --data_file="data/gibbs/gibbs.data"
+
 #ifndef _ISINGGIBBSMODEL_
 #define _ISINGGIBBSMODEL_
 
@@ -13,16 +19,23 @@ DEFINE_string(compare_distribution_file, "IsingGibbsDistributionFile.cmp", "Comp
 DEFINE_int32(compare_distribution_interval, 1000, "Interval to compare distribution from compare_distribution_file.");
 DEFINE_bool(should_compare_to_compare_distribution_file, true, "Should compare to compare_distribution_file.");
 
+struct VertexDistribution {
+    int n_negatives, n_positives;
+};
+
+typedef struct VertexDistribution VertexDistribution;
+
 class IsingGibbsModel : public Model {
  private:
     int n_points;
     bool is_2d_lattice;
-    std::map<std::string, int> states_distribution;
-    int n_states_accumulated;
+    std::vector<VertexDistribution> states_distribution;
+    std::vector<VertexDistribution> compare_distribution;
+    int n_epochs_finished;
     int *model;
 
     void Initialize(const std::string &input_line) {
-	n_states_accumulated = 0;
+	n_epochs_finished = 0;
 
 	// Expect a single number representing # of points and whether it's a 2d lattice;
 	std::stringstream input(input_line);
@@ -38,6 +51,15 @@ class IsingGibbsModel : public Model {
 		model[i] = 1;
 	    }
 	}
+
+	// States distributions loading.
+	for (int i = 0; i < n_points; i++) {
+	    states_distribution.push_back({0,0});
+	    compare_distribution.push_back({0,0});
+	}
+	if (FLAGS_should_compare_to_compare_distribution_file) {
+	    LoadStatesDistributionFromFile(compare_distribution, FLAGS_compare_distribution_file);
+	}
     }
 
     int ThreadsafeRand(const int & min, const int & max) {
@@ -46,56 +68,40 @@ class IsingGibbsModel : public Model {
 	return distribution(generator);
     }
 
-    double CompareStatesDistribution(std::map<std::string, int> &d1,
-				     std::map<std::string, int> &d2) {
-	double s1 = 0, s2 = 0;
+    double CompareStatesDistribution(std::vector<VertexDistribution> &d1,
+				     std::vector<VertexDistribution> &d2) {
 	double error = 0;
-	for (const auto &element : d1) s1 += element.second;
-	for (const auto &element : d2) s2 += element.second;
-	for (const auto &element : d1) {
-	    double s1_prob = element.second / s1;
-	    double s2_prob = 0;
-	    if (d2.find(element.first) != d2.end()) {
-		s2_prob = d2[element.first] / s2;
-	    }
-	    error += pow(s2_prob-s1_prob, 2);
+#pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:error)
+	for (int i = 0; i < n_points; i++) {
+	    double p1 = d1[i].n_positives / (double)(d1[i].n_positives + d2[i].n_negatives);
+	    double p2 = d2[i].n_positives / (double)(d2[i].n_positives + d2[i].n_negatives);
+	    error += pow(p1-p2, 2);
 	}
 	return sqrt(error);
     }
 
-    void LoadStatesDistributionFromFile(std::map<std::string, int> &d, std::string filename) {
+    void LoadStatesDistributionFromFile(std::vector<VertexDistribution> &d, std::string filename) {
 	std::ifstream f_in(filename);
-	while (f_in) {
-	    std::string state;
-	    int count;
-	    f_in >> state;
-	    if (!f_in) break;
-	    f_in >> count;
-	    d[state] = count;
+	int n_points_in_file;
+	f_in >> n_points_in_file;
+	if (n_points_in_file != n_points) {
+	    std::cout << "IsingGibbsModel: n_points in comparison file does not match n_points in model" << std::endl;
+	    exit(0);
 	}
+	for (int i = 0; i < n_points_in_file; i++) {
+	    f_in >> d[i].n_positives;
+	    f_in >> d[i].n_negatives;
+	}
+	f_in.close();
     }
 
-    void WriteStatesDistributionToFile(std::map<std::string, int> &distr, std::string outfile) {
-	// Doesn't seem like C++ has builtin tools to serialize a map.
-	// Just store them in format : state count pairs.
+    void WriteStatesDistributionToFile(std::vector<VertexDistribution> &d, std::string outfile) {
 	std::ofstream f_out(outfile);
-	for (const auto &element : distr) {
-	    f_out << element.first << " " << element.second << std::endl;
+	f_out << d.size() << std::endl;
+	for (int i = 0; i < d.size(); i++) {
+	    f_out << d[i].n_positives << " " << d[i].n_negatives << std::endl;
 	}
 	f_out.close();
-    }
-
-    std::string SerializeModel() {
-	std::string state_string = "";
-	for (int i = 0; i < n_points; i++) {
-	    if (model[i] == 1) {
-		state_string += "1";
-	    }
-	    else {
-		state_string += "0";
-	    }
-	}
-	return state_string;
     }
 
     void Print2DState() {
@@ -168,15 +174,18 @@ class IsingGibbsModel : public Model {
     void EpochFinish() override {
 
 	// Update distribution of states.
-	std::string model_string = SerializeModel();
-	if (states_distribution.find(model_string) == states_distribution.end()) {
-	    states_distribution[model_string] = 0;
+	for (int i = 0; i < n_points; i++) {
+	    if (model[i] < 0) {
+		states_distribution[i].n_negatives++;
+	    }
+	    else {
+		states_distribution[i].n_positives++;
+	    }
 	}
-	states_distribution[model_string]++;
-	n_states_accumulated++;
+	n_epochs_finished++;
 
 	// Write distribution of states to file.
-	if (n_states_accumulated % FLAGS_write_distribution_interval == 0 &&
+	if (n_epochs_finished % FLAGS_write_distribution_interval == 0 &&
 	    FLAGS_should_write_to_distribution_output_file) {
 	    std::cout << "IsingGibbsModel: Writing distribution with " <<
 		states_distribution.size() <<  " states to " <<
@@ -184,11 +193,9 @@ class IsingGibbsModel : public Model {
 	    WriteStatesDistributionToFile(states_distribution, FLAGS_distribution_output_file);
 	}
 
-	if (n_states_accumulated % FLAGS_compare_distribution_interval == 0 &&
+	if (n_epochs_finished % FLAGS_compare_distribution_interval == 0 &&
 	    FLAGS_should_compare_to_compare_distribution_file) {
-	    std::map<std::string, int> compare_distr;
-	    LoadStatesDistributionFromFile(compare_distr, FLAGS_compare_distribution_file);
-	    std::cout << CompareStatesDistribution(states_distribution, compare_distr) << std::endl;
+	    std::cout << CompareStatesDistribution(states_distribution, compare_distribution) << std::endl;
 	}
     }
 
