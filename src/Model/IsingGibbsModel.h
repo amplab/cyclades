@@ -187,8 +187,7 @@ class IsingGibbsModel : public Model {
 	// Write distribution of states to file.
 	if (n_epochs_finished % FLAGS_write_distribution_interval == 0 &&
 	    FLAGS_should_write_to_distribution_output_file) {
-	    std::cout << "IsingGibbsModel: Writing distribution with " <<
-		states_distribution.size() <<  " states to " <<
+	    std::cout << "IsingGibbsModel: Writing distribution to " <<
 		FLAGS_distribution_output_file.c_str() << "." << std::endl;
 	    WriteStatesDistributionToFile(states_distribution, FLAGS_distribution_output_file);
 	}
