@@ -3,6 +3,7 @@
 
 DEFINE_bool(random_batch_processing, false, "Process batches in random order. Note this may disrupt catch-up.");
 DEFINE_bool(random_per_batch_datapoint_processing, false, "Process datapoints in random order per batch. Note this may disrupt catch-up.");
+DEFINE_int32(interval_print, 1, "Interval in which to print the loss.");
 
 template<class GRADIENT_CLASS>
 class Trainer {

@@ -34,7 +34,7 @@ public:
 	// Train.
 	Timer gradient_timer;
 	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
-	    if (FLAGS_print_loss_per_epoch) {
+	    if (FLAGS_print_loss_per_epoch && epoch % FLAGS_interval_print == 0) {
 		this->PrintTimeLoss(gradient_timer, model, datapoints);
 	    }
 

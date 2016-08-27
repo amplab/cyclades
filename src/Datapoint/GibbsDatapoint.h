@@ -14,8 +14,9 @@ private:
 	std::stringstream input(input_line);
 
 	// Expect format:
-	// Coord# neighbor1 neighbor2 ... neighborn.
+	// Coord# prior neighbor1 neighbor2 ... neighborn.
 	input >> coord;
+	input >> tendency;
 	while (input) {
 	    int neighbor;
 	    input >> neighbor;
@@ -26,6 +27,7 @@ private:
 
  public:
     int coord;
+    int tendency;
 
     GibbsDatapoint(const std::string &input_line, int order) : Datapoint(input_line, order) {
 	Initialize(input_line);
