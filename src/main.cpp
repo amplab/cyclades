@@ -59,12 +59,6 @@ TrainStatistics RunOnce() {
     return stats;
 }
 
-bool LearningRateTooHigh(TrainStatistics *stats, double best_score, bool did_increase_lr) {
-    bool best_score_lower = best_score < stats->losses[stats->losses.size()-1] && did_increase_lr;
-    bool divergence = stats->losses[0] <= stats->losses[stats->losses.size()-1];
-    return best_score_lower || divergence;
-}
-
 // Method to tune the learning rate.
 template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS>
 void TuneLearningRate() {
