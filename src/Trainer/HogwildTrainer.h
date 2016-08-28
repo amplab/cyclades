@@ -7,7 +7,7 @@ public:
     HogwildTrainer() {}
     ~HogwildTrainer() {}
 
-    void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) override {
+    TrainStatistics Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) override {
 	// Partition.
 	BasicPartitioner partitioner;
 	Timer partition_timer;
@@ -31,12 +31,14 @@ public:
 	    }
 	}
 
+	// Keep track of statistics of training.
+	TrainStatistics stats;
+
 	// Train.
 	Timer gradient_timer;
 	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
-	    if (FLAGS_print_loss_per_epoch && epoch % FLAGS_interval_print == 0) {
-		this->PrintTimeLoss(gradient_timer, model, datapoints);
-	    }
+
+	    this->EpochBegin(epoch, gradient_timer, model, datapoints, &stats);
 
 	    // Random per batch datapoint processing.
 	    if (FLAGS_random_per_batch_datapoint_processing) {
@@ -60,6 +62,7 @@ public:
 	    }
 	    updater->EpochFinish();
 	}
+	return stats;
     }
 };
 

@@ -2,10 +2,10 @@
 
 #include <iostream>
 #include "defines.h"
+#include <iomanip>
 
 template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS>
-void Run() {
-
+TrainStatistics RunOnce() {
     // Initialize model and datapoints.
     Model *model;
     std::vector<Datapoint *> datapoints;
@@ -43,7 +43,8 @@ void Run() {
 	std::cerr << "Main: training method not chosen." << std::endl;
 	exit(0);
     }
-    trainer->Train(model, datapoints, updater);
+
+    TrainStatistics stats = trainer->Train(model, datapoints, updater);
 
     // Delete trainer.
     delete trainer;
@@ -54,6 +55,54 @@ void Run() {
 
     // Delete updater.
     delete updater;
+
+    return stats;
+}
+
+bool LearningRateTooHigh(TrainStatistics *stats, double best_score, bool did_increase_lr) {
+    bool best_score_lower = best_score < stats->losses[stats->losses.size()-1] && did_increase_lr;
+    bool divergence = stats->losses[0] <= stats->losses[stats->losses.size()-1];
+    return best_score_lower || divergence;
+}
+
+// Method to tune the learning rate.
+template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS>
+void TuneLearningRate() {
+
+    double best_stepsize = -1;
+    double best_score = DBL_MAX;
+
+    for (double cur_stepsize = FLAGS_tune_lr_upper_bound; cur_stepsize >= FLAGS_tune_lr_lower_bound; cur_stepsize /= FLAGS_tune_stepfactor) {
+	FLAGS_learning_rate = cur_stepsize;
+	TrainStatistics cur_stats = RunOnce<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS>();
+	std::cout << "Trainer: (learning_rate: " << cur_stepsize << ") Loss from " << cur_stats.losses[0] << " -> " << cur_stats.losses[cur_stats.losses.size()-1] << std::endl;
+	if (cur_stats.losses[cur_stats.losses.size()-1] < best_score) {
+	    best_score = cur_stats.losses[cur_stats.losses.size()-1];
+	    best_stepsize = cur_stepsize;
+	}
+    }
+    double increment = (best_stepsize * FLAGS_tune_stepfactor - best_stepsize / FLAGS_tune_stepfactor) / FLAGS_tune_stepfactor;
+    for (double cur_stepsize = best_stepsize / FLAGS_tune_stepfactor; cur_stepsize < best_stepsize * FLAGS_tune_stepfactor; cur_stepsize += increment) {
+	FLAGS_learning_rate = cur_stepsize;
+	TrainStatistics cur_stats = RunOnce<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS>();
+	std::cout << "Trainer: (learning_rate: " << cur_stepsize << ") Loss from " << cur_stats.losses[0] << " -> " << cur_stats.losses[cur_stats.losses.size()-1] << std::endl;
+	if (cur_stats.losses[cur_stats.losses.size()-1] < best_score) {
+	    best_score = cur_stats.losses[cur_stats.losses.size()-1];
+	    best_stepsize = cur_stepsize;
+	}
+    }
+    std::cout << "Best stepsize: " << best_stepsize << " Lowest loss: " << best_score << std::endl;
+}
+
+template<class MODEL_CLASS, class DATAPOINT_CLASS, class GRADIENT_CLASS>
+void Run() {
+    if (!FLAGS_tune_learning_rate) {
+	TrainStatistics stats = RunOnce<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS>();
+    }
+    else {
+	// Tune the learning rate.
+	TuneLearningRate<MODEL_CLASS, DATAPOINT_CLASS, GRADIENT_CLASS>();
+    }
 }
 
 int main(int argc, char **argv) {

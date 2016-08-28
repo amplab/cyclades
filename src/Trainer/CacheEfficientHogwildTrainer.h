@@ -7,7 +7,7 @@ public:
     CacheEfficientHogwildTrainer() {}
     ~CacheEfficientHogwildTrainer() {}
 
-    void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) override {
+    TrainStatistics Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) override {
 	// Partition.
 	DFSCachePartitioner partitioner;
 	Timer partition_timer;
@@ -18,12 +18,12 @@ public:
 
 	model->SetUpWithPartitions(partitions);
 
+	TrainStatistics stats;
+
 	// Train.
 	Timer gradient_timer;
 	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
-	    if (FLAGS_print_loss_per_epoch) {
-		this->PrintTimeLoss(gradient_timer, model, datapoints);
-	    }
+	    this->EpochBegin(epoch, gradient_timer, model, datapoints, &stats);
 
 	    updater->EpochBegin();
 
@@ -37,6 +37,7 @@ public:
 	    }
 	    updater->EpochFinish();
 	}
+	return stats;
     }
 };
 

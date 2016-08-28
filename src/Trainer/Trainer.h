@@ -1,19 +1,45 @@
 #ifndef _TRAINER_
 #define _TRAINER_
 
+#include <limits.h>
+#include <float.h>
+
 DEFINE_bool(random_batch_processing, false, "Process batches in random order. Note this may disrupt catch-up.");
 DEFINE_bool(random_per_batch_datapoint_processing, false, "Process datapoints in random order per batch. Note this may disrupt catch-up.");
 DEFINE_int32(interval_print, 1, "Interval in which to print the loss.");
 
+// Contains times / losses / etc
+struct TrainStatistics {
+    std::vector<double> times;
+    std::vector<double> losses;
+};
+
+typedef struct TrainStatistics TrainStatistics;
+
 template<class GRADIENT_CLASS>
 class Trainer {
 protected:
+
+    void TrackTimeLoss(double cur_time, double cur_loss, TrainStatistics *stats) {
+	stats->times.push_back(cur_time);
+	stats->losses.push_back(cur_loss);
+    }
+
     void PrintPartitionTime(Timer &timer) {
 	printf("Partition Time(s): %f\n", timer.Elapsed());
     }
 
-    void PrintTimeLoss(Timer &timer, Model *model, const std::vector<Datapoint *> &datapoints) {
-	printf("Time(s): %f\tLoss: %lf\n", timer.Elapsed(), model->ComputeLoss(datapoints));
+    void PrintTimeLoss(double cur_time, double cur_loss) {
+	printf("Time(s): %f\tLoss: %lf\n", cur_time, cur_loss);
+    }
+
+    void EpochBegin(int epoch, Timer &gradient_timer, Model *model, const std::vector<Datapoint *> &datapoints, TrainStatistics *stats) {
+	double cur_time = gradient_timer.Elapsed();
+	double cur_loss = model->ComputeLoss(datapoints);
+	this->TrackTimeLoss(cur_time, cur_loss, stats);
+	if (FLAGS_print_loss_per_epoch && epoch % FLAGS_interval_print == 0) {
+	    this->PrintTimeLoss(cur_time, cur_loss);
+	}
     }
 
 public:
@@ -34,7 +60,7 @@ public:
     virtual ~Trainer() {}
 
     // Main training method.
-    virtual void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) = 0;
+    virtual TrainStatistics Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) = 0;
 };
 
 #endif

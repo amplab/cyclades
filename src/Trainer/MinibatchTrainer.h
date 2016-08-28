@@ -7,7 +7,7 @@ public:
     MinibatchTrainer() {}
     ~MinibatchTrainer() {}
 
-    void Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) override {
+    TrainStatistics Train(Model *model, const std::vector<Datapoint *> & datapoints, Updater<GRADIENT_CLASS> *updater) override {
 	// Partition.
 	BasicPartitioner partitioner;
 	Timer partition_timer;
@@ -18,12 +18,14 @@ public:
 
 	model->SetUpWithPartitions(partitions);
 
+	// Keep track of statistics of training.
+	TrainStatistics stats;
+
 	// Train.
 	Timer gradient_timer;
 	for (int epoch = 0; epoch < FLAGS_n_epochs; epoch++) {
-	    if (FLAGS_print_loss_per_epoch) {
-		this->PrintTimeLoss(gradient_timer, model, datapoints);
-	    }
+
+	    this->EpochBegin(epoch, gradient_timer, model, datapoints, &stats);
 
 	    updater->EpochBegin();
 
@@ -35,6 +37,7 @@ public:
 	    }
 	    model->EpochFinish();
 	}
+	return stats;
     }
 };
 
