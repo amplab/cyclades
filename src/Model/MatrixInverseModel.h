@@ -9,7 +9,6 @@ DEFINE_int32(n_power_iterations, 10, "Number of power iterations to run to calcu
 class MatrixInverseModel : public Model {
 private:
     int n_coords;
-    double c_norm;
     double lambda;
     double *model, *model_tilde, *sum_gradient_tilde;
     double *sum_gradient_local;
@@ -123,15 +122,6 @@ public:
 	    }
 	}
 
-	// Calulate Frobenius norm of the matrix.
-	double sum_sqr = 0;
-	for (int i = 0; i < n_coords; i++) {
-	    for (const auto &w : datapoints[i]->GetWeights()) {
-		sum_sqr += w*w;
-	    }
-	}
-	c_norm = 1 / sum_sqr;
-
 	// Let B be norm(model^2 * random_vector).
 	B.resize(n_coords);
 
@@ -170,7 +160,7 @@ public:
 	double sum = 0;
 	sum_powers.push_back(0);
 	for (int i = 0; i < n_coords; i++) {
-	    sum += pow(1 - lambda * c_norm * (double)FLAGS_learning_rate, i);
+	    sum += pow(1 - lambda / (double)n_coords * (double)FLAGS_learning_rate, i);
 	    sum_powers.push_back(sum);
 	}
 
@@ -197,7 +187,7 @@ public:
 #pragma omp parallel for num_threads(FLAGS_n_threads) reduction(+:loss)
 	for (int i = 0; i < datapoints.size(); i++) {
 	    double ai_t_x = 0;
-	    double first = sum_sqr * c_norm * lambda;
+	    double first = sum_sqr / (double)n_coords * lambda;
 	    for (int j = 0; j < datapoints[i]->GetWeights().size(); j++) {
 		int index = datapoints[i]->GetCoordinates()[j];
 		double weight = datapoints[i]->GetWeights()[j];
@@ -228,10 +218,10 @@ public:
 	const std::vector<double> &weights = datapoint->GetWeights();
 	const std::vector<int> &coordinates = datapoint->GetCoordinates();
 	for (int i = 0; i < coordinates.size(); i++) {
-	    double sgd_gradient = c_norm * lambda * model[coordinates[i]] -
+	    double sgd_gradient = 1 / (double)n_coords * lambda * model[coordinates[i]] -
 		g->gradient_coefficient * weights[i] -
 		B[coordinates[i]] / n_coords;
-	    double svrg_gradient = c_norm * lambda * model_tilde[coordinates[i]] -
+	    double svrg_gradient = 1 / (double)n_coords * lambda * model_tilde[coordinates[i]] -
 		g->gradient_coefficient_tilde * weights[i] -
 		B[coordinates[i]] / n_coords;
 	    model[coordinates[i]] -= FLAGS_learning_rate * (sgd_gradient - svrg_gradient + sum_gradient_tilde[coordinates[i]] / n_coords);
@@ -244,9 +234,9 @@ public:
 	    double spower = 0;
 	    if (diff < 0) diff = 0;
 	    spower = sum_powers[diff];
-	    double regular_catchup = model[index] * pow(1 - lambda * c_norm * FLAGS_learning_rate, diff) +
+	    double regular_catchup = model[index] * pow(1 - lambda / (double)n_coords * FLAGS_learning_rate, diff) +
 		spower * FLAGS_learning_rate * B[index] / n_coords;
-	    double svrg_catchup = FLAGS_learning_rate * (lambda * c_norm * model_tilde[index] - sum_gradient_tilde[index] / n_coords) * spower;
+	    double svrg_catchup = FLAGS_learning_rate * (lambda / (double)n_coords * model_tilde[index] - sum_gradient_tilde[index] / n_coords) * spower;
 	    model[index] = regular_catchup + svrg_catchup;
 	}
     }
@@ -258,7 +248,7 @@ public:
 	// 2. Compute sum of gradients of the model tilde to be used in SVRG.
 	for (int i = 0; i < n_coords; i++) {
 	    // Initially, add the zeroes contribution gradient sum.
-	    sum_gradient_tilde[i] = (c_norm * lambda * model_tilde[i] - B[i] / n_coords) * n_zeroes_in_column[i];
+	    sum_gradient_tilde[i] = (1 / (double)n_coords * lambda * model_tilde[i] - B[i] / n_coords) * n_zeroes_in_column[i];
 	}
 
 	// To sum in parallel we need extra space per thread to avoid conflicts.
@@ -278,7 +268,7 @@ public:
 	    for (int i = 0; i < datapoint->GetCoordinates().size(); i++) {
 		int index = datapoint->GetCoordinates()[i];
 		double weight = datapoint->GetWeights()[i];
-		sum_gradient_local[index*FLAGS_n_threads+thread_id] += (c_norm * lambda * model_tilde[index] - weight * ai_t_x) - B[index] / n_coords;
+		sum_gradient_local[index*FLAGS_n_threads+thread_id] += (1 / (double)n_coords * lambda * model_tilde[index] - weight * ai_t_x) - B[index] / n_coords;
 	    }
 	    }
 
