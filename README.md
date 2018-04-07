@@ -82,8 +82,23 @@ On Linux do
 cmake .
 ```
 While on Mac OS X do
+```bash
+brew install llvm
+```
+then you can make a symlink if you want
+```bash
+ln -s /usr/local/opt/llvm/bin/clang /usr/local/bin/clang-omp
+```
+export the env variables
+```bash
+export CC=/usr/local/opt/llvm/bin/clang
+export CXX=/usr/local/opt/llvm/bin/clang++
+export LDFLAGS="-L/usr/local/opt/llvm/lib"
+export CPPFLAGS="-I/usr/local/opt/llvm/include"
+```
+then do 
 ```c++
-cmake -DCMAKE_CXX_COMPILER=clang-omp++ .
+cmake -DWITH_OPENMP=ON .
 ```
 Then make to compile
 ```c++
